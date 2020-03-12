@@ -14,8 +14,6 @@ stages:
   displayName: Deploy PowerBI Report
   jobs:
   - deployment: Deploy
-    variables:
-      UserName: antoniolandolfi@leonidev.onmicrosoft.com
     environment: PowerBiService
     strategy:
       runOnce:
@@ -24,12 +22,19 @@ stages:
           - task: PowerShell@2
             displayName: Check PowerBi Module
             inputs:
+              targetType: inline
               pwsh: true
-              script:
+              script: |
+                if(-not (Get-Module -ListAvailable MicrosoftPowerBIMgmt.Reports))
+                {
+                  Write-Host "##vso[task.logissue type=warning]The PowerBI Module isn't installed."
+                  install-Module MicrosoftPowerBIMgmt.Reports -Scope CurrentUser -Force
+                }
           - task: PowerShell@2
             displayName: Upload to PowerBI Service
             inputs:
               pwsh: true
-              filePath: $(Build.SourcesDirectory)/build/publish-report.ps1
+              targetType: filePath
               workingDirectory: $(Build.SourcesDirectory)
-              arguments: -Name $(UserName) -Pwd $(PBIPwd) -Path corona.pbx
+              filePath: $(Build.SourcesDirectory)/build/publish-report.ps1
+              arguments: -Name $(LoginName) -Pwd $(PBIPwd) -Path corona.pbx
