@@ -16,13 +16,15 @@ param(
 $PBpwd = ConvertTo-SecureString $Pwd -AsPlainText -Force
 $PBCred = New-Object System.Management.Automation.PSCredential ($Username, $PBpwd)
 
-$reportName = $Path.Split(".")[0]
+$reportName = $Path.Split(".")[0].Trim()
 if($PSBoundParameters.ContainsKey("Name")) {
     $reportName = $Name
 }
 
 Write-Verbose "Connectiong to PowerBI Service"
-Connect-PowerBIServiceAccount -Credential $PBCred
+#Connect-PowerBIServiceAccount -Credential $PBCred
 
 Write-Verbose "Upload file"
-New-PowerBIReport -Path $Path -Name $reportName -ConflictAction CreateOrOverwrite
+#New-PowerBIReport -Path $Path -Name $reportName -ConflictAction CreateOrOverwrite
+
+Write-Output "$Username $pwd $reportName $Path"
