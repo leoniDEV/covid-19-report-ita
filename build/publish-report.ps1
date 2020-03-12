@@ -18,11 +18,11 @@ $PBCred = New-Object System.Management.Automation.PSCredential ($Username, $PBpw
 
 $reportName = $Path.Split(".")[0]
 if($PSBoundParameters.ContainsKey("Name")) {
-    $ReportName = $Name
+    $reportName = $Name
 }
 
 Write-Verbose "Connectiong to PowerBI Service"
 Connect-PowerBIServiceAccount -Credential $PBCred
 
 Write-Verbose "Upload file"
-New-PowerBIReport -Path $Path -Name $name -ConflictAction CreateOrOverwrite
+New-PowerBIReport -Path $Path -Name $reportName -ConflictAction CreateOrOverwrite
