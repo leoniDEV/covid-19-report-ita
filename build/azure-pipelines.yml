@@ -1,0 +1,35 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - corona.pbx
+
+pool:
+  name: SelfHost Win
+
+stages:
+- stage: deploy-pbi
+  displayName: Deploy PowerBI Report
+  jobs:
+  - deployment: Deploy
+    variables:
+      UserName: antoniolandolfi@leonidev.onmicrosoft.com
+    environment: PowerBiService
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: PowerShell@2
+            displayName: Check PowerBi Module
+            inputs:
+              pwsh: true
+              script:
+          - task: PowerShell@2
+            displayName: Upload to PowerBI Service
+            inputs:
+              pwsh: true
+              filePath: $(Build.SourcesDirectory)/build/publish-report.ps1
+              workingDirectory: $(Build.SourcesDirectory)
+              arguments: -Name $(UserName) -Pwd $(PBIPwd) -Path corona.pbx
