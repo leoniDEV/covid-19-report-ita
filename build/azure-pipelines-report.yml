@@ -22,11 +22,13 @@ stages:
         action: edit
         repositoryName: github.com/leoniDEV/covid-19-report-ita
         target: $(Build.SourceVersion)
-        tagSource: gitTag
+        tagSource: userSpecifiedTag
+        tag: $(Build.SourceVersion)
         title: COVID-19 Report ITA
         assets: $(Build.SourcesDirectory)/$(FileName)
         addChangeLog: true
         gitHubConnection: github.com_leoniDEV
+        changeLogCompareToRelease: lastFullRelease
 
 - stage: deployPbi
   displayName: Deploy PowerBI Report
