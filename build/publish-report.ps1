@@ -22,9 +22,9 @@ if($PSBoundParameters.ContainsKey("Name")) {
 }
 
 Write-Verbose "Connectiong to PowerBI Service"
-Connect-PowerBIServiceAccount -Credential $PBCred
+Connect-PowerBIServiceAccount -Credential $PBCred | Out-Null
 
 Write-Verbose "Upload file"
-New-PowerBIReport -Path $Path -Name $reportName -ConflictAction CreateOrOverwrite
+New-PowerBIReport -Path $Path -Name $reportName -ConflictAction CreateOrOverwrite | Out-Null
 
 Disconnect-PowerBIServiceAccount
