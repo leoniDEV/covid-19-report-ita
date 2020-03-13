@@ -1,0 +1,33 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - src/COVID-19-Report-ITA.Web/*
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: deploy-pbi
+  displayName: Deploy PowerBI Report
+  jobs:
+  - deployment: Deploy
+    environment: WebProd
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: FtpUpload@2
+            displayName: 'Upload to Ionos'
+            inputs:
+              credentialsOption: 'serviceEndpoint'
+              serverEndpoint: 'FTPChannel'
+              rootDirectory: $(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/
+              filePatterns: '**'
+              remoteDirectory: 'leonidev/COVID-19'
+              clean: false
+              cleanContents: true
+              preservePaths: true
+              trustSSL: true
