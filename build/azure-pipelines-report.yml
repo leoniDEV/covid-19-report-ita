@@ -70,4 +70,4 @@ stages:
               targetType: filePath
               workingDirectory: $(Build.SourcesDirectory)
               filePath: $(Build.SourcesDirectory)/build/publish-report.ps1
-              arguments: -Name $(LoginName) -Pwd $(PBIPwd) -Path $(FileName)
+              arguments: -Name $(LoginName) -Pwd $(PBIPwd) -Path $(Build.SourcesDirectory)/$(FileName)
