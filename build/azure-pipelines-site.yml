@@ -19,6 +19,8 @@ stages:
       runOnce:
         deploy:
           steps:
+          - download: none
+          - checkout: self
           - task: FtpUpload@2
             displayName: 'Upload to Ionos'
             inputs:
