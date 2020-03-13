@@ -7,7 +7,12 @@ trigger:
     - corona.pbx
 
 pool:
-  vmImage: 'windows-latest'
+  name: SelfHost Win
+  #vmImage: 'windows-latest'
+
+variables:
+  FileName: 'covid-19-report-ita.pbix'
+  tagname: 'covid19'
 
 stages:
 - stage: release
@@ -16,19 +21,27 @@ stages:
   - job: Release
     displayName: Release on Github
     steps:
+    - task: CopyFiles@2
+      displayName: Copy Assets
+      inputs:
+        CleanTargetFolder: true
+        SourceFolder: $(Build.SourcesDirectory)
+        TargetFolder: $(Build.ArtifactStagingDirectory)
+        Contents: $(FileName)
+
     - task: GitHubRelease@1
       displayName: Release report
       inputs:
         action: edit
-        repositoryName: github.com/leoniDEV/covid-19-report-ita
+        repositoryName: leoniDEV/covid-19-report-ita
         target: $(Build.SourceVersion)
         tagSource: userSpecifiedTag
-        tag: $(Build.SourceVersion)
+        tag: $(tagname)
         title: COVID-19 Report ITA
-        assets: $(Build.SourcesDirectory)/$(FileName)
         addChangeLog: true
         gitHubConnection: github.com_leoniDEV
         changeLogCompareToRelease: lastFullRelease
+        assetUploadMode: delete
 
 - stage: deployPbi
   displayName: Deploy PowerBI Report
