@@ -5,4 +5,4 @@ Analisi dei dati sull'epidemia di COVID-19 in Italia, basati sui dati forniti da
 
 # Licenza
 ## _covid-19-report-ita.pbix_:
-contiene il report pubblicato all'indirizzo http://covid-19.leonidev.com<br/>Autore: [Antonio Landolfi](http://https://www.linkedin.com/in/antonio-landolfi/)&nbsp;&nbsp;&nbsp;&nbsp;[<img src="https://media.leonidev.com/misc/github/github-mark-32px.png" alt="github" title="github" width="24" height="24"/>](https://github.com/leoniDEV)<br/>Licenza: [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/) - [Visualizza](https://creativecommons.org/licenses/by-sa/4.0/legalcode.txt)
+contiene il report pubblicato all'indirizzo http://covid-19.leonidev.com<br/>Autore: [Antonio Landolfi](http://https://www.linkedin.com/in/antonio-landolfi/)<br/>Licenza: [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/) - [Visualizza](https://creativecommons.org/licenses/by-sa/4.0/legalcode.txt)
