@@ -10,6 +10,24 @@ pool:
   vmImage: 'windows-latest'
 
 stages:
+- stage: release
+  displayName: Release report
+  jobs:
+  - job: Release
+    displayName: Release on Github
+    steps:
+    - task: GitHubRelease@1
+      displayName: Release report
+      inputs:
+        action: edit
+        repositoryName: github.com/leoniDEV/covid-19-report-ita
+        target: $(Build.SourceVersion)
+        tagSource: gitTag
+        title: COVID-19 Report ITA
+        assets: $(Build.SourcesDirectory)/$(FileName)
+        addChangeLog: true
+        gitHubConnection: leoniDEV
+
 - stage: deploy-pbi
   displayName: Deploy PowerBI Report
   jobs:
@@ -37,4 +55,4 @@ stages:
               targetType: filePath
               workingDirectory: $(Build.SourcesDirectory)
               filePath: $(Build.SourcesDirectory)/build/publish-report.ps1
-              arguments: -Name $(LoginName) -Pwd $(PBIPwd) -Path corona.pbx
+              arguments: -Name $(LoginName) -Pwd $(PBIPwd) -Path $(FileName)
