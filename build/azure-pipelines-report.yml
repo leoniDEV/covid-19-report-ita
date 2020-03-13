@@ -7,7 +7,7 @@ trigger:
     - corona.pbx
 
 pool:
-  name: SelfHost Win
+  vmImage: 'windows-latest'
 
 stages:
 - stage: deploy-pbi
