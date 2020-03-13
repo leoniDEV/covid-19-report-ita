@@ -1,4 +1,4 @@
-[![Build Status](https://dev.azure.com/leonidev/covid-19-report-ita/_apis/build/status/covid-19-report-ita?branchName=master)](https://dev.azure.com/leonidev/covid-19-report-ita/_build/latest?definitionId=22&branchName=master)
+[![Build Status](https://dev.azure.com/leonidev/covid-19-report-ita/_apis/build/status/leoniDEV.covid-19-report-ita?branchName=master)](https://dev.azure.com/leonidev/covid-19-report-ita/_build/latest?definitionId=23&branchName=master)
 # COVID-19 Report Italia
 Analisi dei dati sull'epidemia di COVID-19 in Italia, basati sui dati forniti dal Dipartimento di Protezione Civile ed raggiungibili qui: https://github.com/pcm-dpc/COVID-19
 
