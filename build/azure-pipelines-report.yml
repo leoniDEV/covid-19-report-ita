@@ -28,7 +28,7 @@ stages:
         addChangeLog: true
         gitHubConnection: leoniDEV
 
-- stage: deploy-pbi
+- stage: deployPbi
   displayName: Deploy PowerBI Report
   jobs:
   - deployment: Deploy
