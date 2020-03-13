@@ -10,8 +10,8 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-- stage: deploy-pbi
-  displayName: Deploy PowerBI Report
+- stage: deploy-website
+  displayName: Deploy The web site
   jobs:
   - deployment: Deploy
     environment: WebProd
