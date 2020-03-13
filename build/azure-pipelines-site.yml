@@ -20,7 +20,7 @@ stages:
         deploy:
           steps:
           - task: FtpUpload@2
-            displayName: 'Upload to Ionos'
+            displayName: 'Upload Host'
             inputs:
               credentialsOption: 'serviceEndpoint'
               serverEndpoint: 'FTPChannel'
