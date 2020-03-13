@@ -69,5 +69,5 @@ stages:
               pwsh: true
               targetType: filePath
               workingDirectory: $(Build.SourcesDirectory)
-              filePath: $(Build.SourcesDirectory)/build/publish-report.ps1
-              arguments: -Name $(LoginName) -Pwd $(PBIPwd) -Path $(Build.SourcesDirectory)/$(FileName)
+              filePath: $(Build.SourcesDirectory)\build\publish-report.ps1
+              arguments: -Username $(LoginName) -Pwd $(PBIPwd) -Path $(Build.SourcesDirectory)\$(FileName)
