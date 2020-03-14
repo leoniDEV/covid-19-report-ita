@@ -1,0 +1,20 @@
+{
+  "name": "covid-19-report-ita-web",
+  "version": "1.0.0",
+  "description": "Analisi dei dati sull'epidemia di COVID-19 in Italia",
+  "browser": "script,js",
+  "type": "module",
+  "scripts": {
+    "pnpm:install": "pnpm install",
+    "ts:compile": "tsc --project tsconfig.json"
+  },
+  "author": "leoniDEV",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leoniDEV/covid-19-report-ita"
+  },
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  }
+}

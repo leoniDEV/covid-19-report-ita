@@ -1,0 +1,13 @@
+devDependencies:
+  typescript: 3.8.3
+lockfileVersion: 5.1
+packages:
+  /typescript/3.8.3:
+    dev: true
+    engines:
+      node: '>=4.2.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-MYlEfn5VrLNsgudQTVJeNaQFUAI7DkhnOjdpAp4T+ku1TfQClewlbSuTVHiA+8skNBgaf02TL/kLOvig4y3G8w==
+specifiers:
+  typescript: ^3.8.3
