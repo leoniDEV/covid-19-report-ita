@@ -1,4 +1,6 @@
-[![Build Status](https://dev.azure.com/leonidev/covid-19-report-ita/_apis/build/status/leoniDEV.covid-19-report-ita?branchName=master)](https://dev.azure.com/leonidev/covid-19-report-ita/_build/latest?definitionId=23&branchName=master)
+deploy pbix in PowerBI Serivce [![Build Status](https://dev.azure.com/leonidev/covid-19-report-ita/_apis/build/status/leoniDEV.covid-19-report-ita?branchName=master)](https://dev.azure.com/leonidev/covid-19-report-ita/_build/latest?definitionId=23&branchName=master)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Build & Deploy WebSite
+[![Build Status](https://dev.azure.com/leonidev/covid-19-report-ita/_apis/build/status/leoniDEV.covid-19-report-ita-WebSite?branchName=master)](https://dev.azure.com/leonidev/covid-19-report-ita/_build/latest?definitionId=24&branchName=master)
+
 # COVID-19 Report Italia
 Analisi dei dati sull'epidemia di COVID-19 in Italia, basati sui dati forniti dal Dipartimento di Protezione Civile ed raggiungibili qui: https://github.com/pcm-dpc/COVID-19
 
