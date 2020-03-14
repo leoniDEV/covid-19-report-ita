@@ -10,6 +10,30 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
+- stage: build
+  displayName: Build WebSite
+  jobs:
+  - job: build
+    steps:
+    - task: Npm@1
+      displayName: Install dependecies
+      inputs:
+        command: 'install'
+        workingDir: '$(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/'
+    - task: Npm@1
+      displayName: Build TS code
+      inputs:
+        command: 'custom'
+        workingDir: '$(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/'
+        customCommand: 'run ts:compile'
+    - task: PublishPipelineArtifact@1
+      displayName: Publish artifacts
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/'
+        artifact: 'report-web'
+        publishLocation: 'pipeline'
+
+
 - stage: deploy-website
   displayName: Deploy The web site
   jobs:
@@ -26,7 +50,7 @@ stages:
             inputs:
               credentialsOption: 'serviceEndpoint'
               serverEndpoint: 'FTPChannel'
-              rootDirectory: $(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/
+              rootDirectory: $(Pipeline.Workspace)/report-web/
               filePatterns: '**'
               remoteDirectory: 'leonidev/COVID-19'
               clean: false
