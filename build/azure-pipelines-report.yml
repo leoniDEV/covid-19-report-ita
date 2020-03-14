@@ -4,7 +4,7 @@ trigger:
     - master
   paths:
     include:
-    - corona.pbx
+    - covid-19-report-ita.pbix
 
 pool:
   name: SelfHost Win

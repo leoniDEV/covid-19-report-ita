@@ -30,7 +30,7 @@ stages:
       displayName: Publish artifacts
       inputs:
         targetPath: '$(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/'
-        artifact: 'report-web'
+        artifact: 'reportweb'
         publishLocation: 'pipeline'
 
 
@@ -43,16 +43,14 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: none
-          - checkout: self
           - task: FtpUpload@2
             displayName: 'Upload Host'
             inputs:
               credentialsOption: 'serviceEndpoint'
               serverEndpoint: 'FTPChannel'
-              rootDirectory: $(Pipeline.Workspace)/report-web/
+              rootDirectory: $(Pipeline.Workspace)/reportweb
               filePatterns: '**'
-              remoteDirectory: 'leonidev/COVID-19'
+              remoteDirectory: 'covid19'
               clean: false
               cleanContents: true
               preservePaths: true
