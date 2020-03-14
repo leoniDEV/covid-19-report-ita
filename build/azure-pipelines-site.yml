@@ -34,7 +34,7 @@ stages:
         publishLocation: 'pipeline'
 
 
-- stage: deploy-website
+- stage: deploywebsite
   displayName: Deploy The web site
   jobs:
   - deployment: Deploy
