@@ -50,7 +50,7 @@ footer {
     display: flex;
     font-family: 'Comfortaa', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 100;
-    font-size: 1rem;
+    font-size: .9rem;
     justify-content: space-between;
     align-items: center;
     width: 90vw;
@@ -67,10 +67,10 @@ footer a {
 }
 
 .icon {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-style: normal;
     font-family: icomoon;
-    margin-left: 25px;
+    margin-left: 20px;
     position: relative;
 }
 
