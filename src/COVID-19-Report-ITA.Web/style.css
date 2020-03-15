@@ -22,6 +22,13 @@
   font-display: block;
 }
 
+@font-face {
+  font-family: 'Nunito Sans';
+  src: url('fonts/NunitoSans-Bold.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: block;
+}
 
 body
 {
@@ -31,6 +38,15 @@ body
     flex-direction: column;
     height: 100vh;
     width: 100vw;
+}
+
+:link {
+    text-decoration: none;
+    color: unset;
+}
+
+:visited {
+    color: unset;
 }
 
 main {
@@ -54,7 +70,7 @@ footer {
     justify-content: space-between;
     align-items: center;
     width: 90vw;
-    height: 80px;
+    height: 64px;
 
 }
 
@@ -80,20 +96,114 @@ footer a {
 }
 
 .icon-linkedin::before {
-    content: "\f08c";
     color: #2867B2;
-    z-index: 2;
+    content: "\f08c";
 }
 
-.icon-heart::before {
-    font-size: 1.25rem;
+.icon-facebook::before {
+    color: #2867B2;
+    content: "\f082";
+}
+
+.icon-twitter::before {
+    color: #2867B2;
+    content: "\f099";
+}
+
+.icon-heart {
+    margin-left: 0;
+    display: inline-block;
     color: red;
     content: "\f004";
-    margin-left: -20px;
+    font-size: 1.25rem;
+    cursor: none;
 }
 
-.icon:hover::before {
+.icon-heart:hover {
+    transform-origin: center;
+    animation: pulse .5s ease-in alternate infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(.5);
+    }
+}
+
+.animate-text:hover, .animate-text:hover::before, .animate-button:hover, .animate-button:hover::before {
     position: relative;
-    top: -1px;
-    text-shadow: 2px 3px 3px rgba(127, 127, 127, 0.45)
+    --offset: -1px;
+    top: var(--offset);
+}
+
+.animate-text:hover, .animate-text:hover::before {
+    text-shadow: 2px 3px 3px rgba(127, 127, 127, 0.45);
+}
+
+.animate-button:hover, .animate-button:hover::before {
+    box-shadow: 2px 3px 3px rgba(127, 127, 127, 0.45);
+    top: calc(var(--offset) * 2);
+}
+
+.fa-font {
+    font-family: icomoon;
+    font-size: .9em;
+}
+
+.wordmark {
+    line-height: var(--icon-height);
+    font-size: .45em;
+}
+
+#share-box {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto var(--icon-height);
+    align-items: center;
+    justify-items: center;
+    height: auto;
+    margin-top: 6px;
+    padding: 0;
+    width: 360px;
+    --button-height: 32px;
+    position: relative;
+}
+
+#share-header{
+    font-size: .7rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+    grid-column: 1 / span 3;
+}
+
+.icon-center {
+    vertical-align: middle;
+    line-height: var(--button-height);
+}
+
+.share-button {
+    width: calc(var(--button-height) / .375);
+    height: var(--button-height);
+    color: white;
+    text-align: center;
+    font-size: 24px;
+}
+
+.linkedin {
+    background-color: #2867B2
+}
+
+.facebook {
+    background-color: rgb(53, 114, 189)
+}
+
+.twitter {
+    background-color: rgb(29, 161, 242)
+}
+
+.instagram {
+    background-color: rgb(193, 53, 132)
 }
