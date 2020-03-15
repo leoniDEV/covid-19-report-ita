@@ -43,7 +43,7 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: FtpUpload@2
+          - task: FtpUpload@1
             displayName: 'Upload Host'
             inputs:
               credentialsOption: 'serviceEndpoint'
