@@ -50,7 +50,7 @@ stages:
               serverEndpoint: 'FTPChannel'
               rootDirectory: $(Pipeline.Workspace)/reportweb
               filePatterns: '**'
-              remoteDirectory: '/covid19'
+              remoteDirectory: 'covid19'
               clean: false
               cleanContents: true
               preservePaths: true
