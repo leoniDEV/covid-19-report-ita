@@ -7,7 +7,8 @@ trigger:
     - covid-19-report-ita.pbix
 
 pool:
-  vmImage: 'windows-latest'
+  name: SelfHost Win
+  #vmImage: 'windows-latest'
 
 variables:
   FileName: 'covid-19-report-ita.pbix'
@@ -39,7 +40,7 @@ stages:
         title: COVID-19 Report ITA
         addChangeLog: true
         gitHubConnection: github.com_leoniDEV
-        changeLogCompareToRelease: lastNonDraftRelease
+        changeLogCompareToRelease: lastFullRelease
         assetUploadMode: delete
 
 - stage: deployPbi
@@ -51,6 +52,7 @@ stages:
       runOnce:
         deploy:
           steps:
+          - checkout: self
           - task: PowerShell@2
             displayName: Check PowerBi Module
             inputs:
