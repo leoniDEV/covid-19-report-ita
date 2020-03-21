@@ -5,7 +5,7 @@ deploy pbix in PowerBI Serivce [![Build Status](https://dev.azure.com/leonidev/c
 Analisi dei dati sull'epidemia di COVID-19 in Italia, basati sui dati forniti dal Dipartimento di Protezione Civile ed raggiungibili qui: https://github.com/pcm-dpc/COVID-19
 
 
-# Licenza
+# Licenze
 I contenuti presenti in questo repository vengono distribuiti sotto diverse licenze.
 Ogni contenuto viene rilasciato secondo la licenza indicata nel file LICENCE.txt che si trova nella stessa directory del contenuto in oggetto, se nella stessa directory non è presente alcun file LICENCE.txt allora si fa riferimento al file LICENCE.txt nella directory di livello superiore.
 In particolare:
