@@ -1,4 +1,8 @@
 .vscode/
+.vs/
+Artifacts/
+**/*.Ita.*
+Directory*
 node_modules/
 misc/
 **/*.js
