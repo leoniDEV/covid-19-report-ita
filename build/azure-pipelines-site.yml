@@ -4,10 +4,11 @@ trigger:
     - master
   paths:
     include:
-    - src/COVID-19-Report-ITA.Web/*
+    - src/Covid19Report.Ita.Views/*
+    - src/Covid19Report.Ita.Api/*
 
 pool:
-  vmImage: ubuntu-latest
+  name: SelfHost Win
 
 stages:
 - stage: build
@@ -15,24 +16,21 @@ stages:
   jobs:
   - job: build
     steps:
-    - task: Npm@1
-      displayName: Install dependecies
+    - task: DotNetCoreCLI@2
+      displayName: Build $(System.TeamProject) $(buildConfiguration)
       inputs:
-        command: 'install'
-        workingDir: '$(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/'
-    - task: Npm@1
-      displayName: Build TS code
+        command: build
+        arguments: --configuration $(buildConfiguration)
+    
+    - task: DotNetCoreCLI@2
+      displayName: Publish $(System.TeamProject) $(buildConfiguration)
       inputs:
-        command: 'custom'
-        workingDir: '$(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/'
-        customCommand: 'run ts:compile'
-    - task: PublishPipelineArtifact@1
-      displayName: Publish artifacts
-      inputs:
-        targetPath: '$(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/'
-        artifact: 'reportweb'
-        publishLocation: 'pipeline'
+        command: publish
+        arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
+    - publish: $(Build.ArtifactStagingDirectory)
+      displayName: Publish pipeline artifacts
+      artifact: webApp
 
 - stage: deploywebsite
   displayName: Deploy The web site
