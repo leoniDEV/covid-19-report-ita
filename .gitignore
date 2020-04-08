@@ -1,4 +1,9 @@
 .vscode/
+.vs/
+Artifacts/
+test/
+TestData/
+TestResults/
 node_modules/
 misc/
 **/*.js

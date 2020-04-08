@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "pnpm:install": "pnpm install",
-    "ts:compile": "tsc --project tsconfig.json"
+    "ts:compile": "tsc --project tsconfig.json",
+    "build": "npm run ts:compile"
   },
   "author": "leoniDEV",
   "license": "MIT",

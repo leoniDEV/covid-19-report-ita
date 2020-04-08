@@ -1,0 +1,131 @@
+<Project>
+
+    <!--Default Author-->
+    <PropertyGroup>
+        <Authors>leoniDEV</Authors>
+        <Company>leoniDEV</Company>
+    </PropertyGroup>
+
+    <!--enable nullability-->
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <!--Configure Portable PDB-->
+    <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+        <DebugType>Portable</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <SYSTEM_SERVERTYPE Condition="$(SYSTEM_SERVERTYPE) == ''">Local</SYSTEM_SERVERTYPE>
+        <BUILD_REASON Condition="$(BUILD_REASON) == ''">Local</BUILD_REASON>
+        <IsNPMPackage>false</IsNPMPackage>
+        <EnableBenchmark>false</EnableBenchmark>
+    </PropertyGroup>
+
+    <!--Root Directory-->
+    <PropertyGroup>
+        <BaseSolutionPath>$([MSBuild]::ValueOrDefault('$(SolutionDir)', '$(MSBuildThisFileDirectory)'))</BaseSolutionPath>
+    </PropertyGroup>
+
+    <!--Default Build Folder-->
+    <PropertyGroup>
+        <BuildDir>$(BaseSolutionPath)Build</BuildDir>
+    </PropertyGroup>
+
+    <!--Set Default Artifact folder-->
+    <PropertyGroup>
+        <EnableDefaultArtifacts>false</EnableDefaultArtifacts>
+        <OutputLocation>$(MSBuildProjectName)\$(Configuration)</OutputLocation>
+        <BaseArtifactsPath>$(BaseSolutionPath)Artifacts</BaseArtifactsPath>
+        <BaseOutputPath Condition="'$(BaseOutputPath)' == ''">$(BaseArtifactsPath)\$(MSBuildProjectName)\</BaseOutputPath>
+        <PublishDir>$(BaseArtifactsPath)\Publish\$(OutputLocation)</PublishDir>
+        <BaseIntermediateOutputPath>$(BaseArtifactsPath)\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    </PropertyGroup>
+
+    <!--Set the Asset Folder-->
+    <PropertyGroup>
+        <AssetRoot Condition="Exists('$(MSBuildThisFileDirectory)Assets')">$(MSBuildThisFileDirectory)Assets</AssetRoot>
+        <AssetToDeployLocation Condition="Exists('$(AssetRoot)\ToDeploy')">$(AssetRoot)\ToDeploy</AssetToDeployLocation>
+        <CopyDefaultAssets>false</CopyDefaultAssets>
+    </PropertyGroup>
+
+    <ItemGroup Condition="$(CopyDefaultAssets)">
+        <Artifact Include ="$(AssetToDeployLocation)" DestinationFolder="$(DestinationAssetFolder)" />
+    </ItemGroup>
+
+    <!--Set .artifactignore filte-->
+    <PropertyGroup>
+        <ArtifactIngoreFileName>.artifactignore</ArtifactIngoreFileName>
+        <ProdArtifactIngoreFile Condition="'$(ProdArtifactIngoreFile)' == ''">.artifactignore.prod</ProdArtifactIngoreFile>
+        <DevArtifactIngoreFile Condition="'$(DevArtifactIngoreFile)' == ''">.artifactignore.dev</DevArtifactIngoreFile>
+    </PropertyGroup>
+
+        <!--
+    <ItemGroup>
+        <ArtifactIgnoreList Include="$(ArtifactIngoreFileName)" />
+        <Artifactignores Include="**\.artifactignore" />
+        <ArtifactignoresDev Include="**\.artifactignore.dev" />
+        <ArtifactignoresProd Include="**\.artifactignore.prod" />
+    </ItemGroup>
+        -->
+
+    <!--NPM Package Project-->
+    <PropertyGroup>
+        <IsNPMPackage>$([System.IO.File]::Exists('$(MSBuildProjectDirectory)\package.json'))</IsNPMPackage>
+        <EnableNPMClean>false</EnableNPMClean>
+        <EnableNPMBuild>false</EnableNPMBuild>
+        <NPMCleanCommand Condition="$(IsNPMPackage)">clean</NPMCleanCommand>
+        <NPMBuildCommand Condition="$(IsNPMPackage)">build</NPMBuildCommand>
+    </PropertyGroup>
+
+    <!--Set WWWRoot-->
+    <PropertyGroup Condition="$(UsingMicrosoftNETSdkWeb) == 'true'">
+        <WWWRoot>$(MSBuildProjectDirectory)\wwwroot</WWWRoot>
+        <CopyDefaultAssets>true</CopyDefaultAssets>
+        <DestinationAssetFolder>$(WWWRoot)</DestinationAssetFolder>
+    </PropertyGroup>
+
+    <!--Import default Analizers-->
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0-beta3.final+f9024057">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Roslynator.Analyzers" Version="2.3.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.5.0.15942">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.164">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Build.Artifacts" Version="2.0.20">
+            <IncludeAssets>build</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <!--PackageReference for Web Projects-->
+    <ItemGroup Condition="$(UsingMicrosoftNETSdkWeb) == 'true'">
+        <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <!--PackageReference for TestProjects-->
+    <!--<ItemGroup Condition="$(IsTestProject) == 'true'" >
+        <PackageReference Include="Moq" Version="4.13.1" />
+        <PackageReference Condition="'$(EnableBenchmark)'" Include="BenchmarkDotNet" Version="0.12.0" />
+    </ItemGroup>-->
+
+</Project>

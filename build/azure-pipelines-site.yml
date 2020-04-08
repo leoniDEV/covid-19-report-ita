@@ -7,8 +7,26 @@ trigger:
     - src/Covid19Report.Ita.Views/*
     - src/Covid19Report.Ita.Api/*
 
+
 pool:
   name: SelfHost Win
+variables:
+- name: buildConfiguration
+  value: Release
+- name: pbiGitUrl
+  value: 'https://app.powerbi.com/view?r=eyJrIjoiNTFmMTIwZTAtMWJiYy00M2I1LWEyMWUtNTNiNzM4OTY5MDViIiwidCI6IjU2MzRjYTUzLTc5NjUtNDAzMC1hMzBlLWE0M2NkOTkzNTMwMCIsImMiOjl9'
+- name: pbiCosmosUrl
+  value: 'https://app.powerbi.com/view?r=eyJrIjoiNzMzNjAxYzItNjRiZi00ZDNmLWIzNWMtMTVhZTk3YTIyMjQ0IiwidCI6IjU2MzRjYTUzLTc5NjUtNDAzMC1hMzBlLWE0M2NkOTkzNTMwMCIsImMiOjl9'
+- name: pbiReportUrl
+  value: $(pbiGitUrl)
+
+parameters:
+- name: pbiSource
+  type: string
+  default: Git
+  values:
+  - Git
+  - Cosmos
 
 stages:
 - stage: build
@@ -16,40 +34,115 @@ stages:
   jobs:
   - job: build
     steps:
+    - task: Npm@1
+      inputs:
+        workingDir: '$(Build.SourcesDirectory)/src/Covid19Report.Ita.Views'
+        command: 'custom'
+        customCommand: 'install pnpm'
+
     - task: DotNetCoreCLI@2
       displayName: Build $(System.TeamProject) $(buildConfiguration)
       inputs:
         command: build
-        arguments: --configuration $(buildConfiguration)
-    
+        projects: src/Covid19Report.Ita.Api/*.csproj
+        arguments: --configuration $(buildConfiguration) -r win-x86
+
     - task: DotNetCoreCLI@2
       displayName: Publish $(System.TeamProject) $(buildConfiguration)
       inputs:
         command: publish
-        arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+        publishWebProjects: false
+        zipAfterPublish: false
+        projects: src/Covid19Report.Ita.Api/*.csproj
+        arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) -r win-x86 /p:PublishTrimmed=true --no-build'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')
 
     - publish: $(Build.ArtifactStagingDirectory)
       displayName: Publish pipeline artifacts
-      artifact: webApp
+      artifact: reportweb
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')
 
-- stage: deploywebsite
-  displayName: Deploy The web site
-  jobs:
-  - deployment: Deploy
-    environment: WebProd
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: FtpUpload@1
-            displayName: 'Upload Host'
-            inputs:
-              credentialsOption: 'serviceEndpoint'
-              serverEndpoint: 'FTPChannel'
-              rootDirectory: $(Pipeline.Workspace)/reportweb
-              filePatterns: '**'
-              remoteDirectory: 'covid19'
-              clean: false
-              cleanContents: true
-              preservePaths: true
-              trustSSL: true
+- ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+  - stage: deployTest
+    displayName: Deploy The web site in test env
+    jobs:
+    - deployment: Deploy
+      environment: Test
+      variables:
+        - pbiReportUrl: ${{ format('$(pbi{0}Url)', parameters.pbiSource }}
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: FileTransform@2
+              inputs:
+                folderPath: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
+                jsonTargetFiles: 'appSettings.Staging.json'
+
+            - task: FileTransform@2
+              inputs:
+                folderPath: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
+                jsonTargetFiles: 'appSettings.Production.json'
+
+            - task: PowerShell@2
+              displayName: Set Environment to Staging
+              inputs:
+                workingDirectory: $(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api
+                pwsh: true
+                targetType: inline
+                script: |
+                  [xml]$web = Get-Content .\web.config
+                  $item = Select-Xml -Xml $web -XPath "//environmentVariable[@name='ASPNETCORE_ENVIRONMENT']"
+                  $item.Node.value = "Staging"
+                  $web.Save("$pwd\web2.config")
+
+            - task: FtpUpload@1
+              displayName: 'Upload Host'
+              inputs:
+                credentialsOption: 'serviceEndpoint'
+                serverEndpoint: 'FTPChannel'
+                rootDirectory: $(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api
+                filePatterns: '**'
+                remoteDirectory: 'dev'
+                clean: false
+                cleanContents: true
+                preservePaths: true
+                trustSSL: true
+
+- ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+  - stage: deployProd
+    displayName: Deploy The web site in Prod
+    jobs:
+    - deployment: Deploy
+      environment: Prod
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: FileTransform@2
+              inputs:
+                folderPath: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
+                jsonTargetFiles: 'appSettings.Production.json'
+
+            - task: FileTransform@2
+              inputs:
+                folderPath: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
+                jsonTargetFiles: 'appSettings.Production.json'
+
+            - task: FileTransform@2
+              inputs:
+                folderPath: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
+                jsonTargetFiles: 'appSettings.Production.json'
+
+            - task: FtpUpload@1
+              displayName: 'Upload Host'
+              inputs:
+                credentialsOption: 'serviceEndpoint'
+                serverEndpoint: 'FTPChannel'
+                rootDirectory: $(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api
+                filePatterns: '**'
+                remoteDirectory: 'covid'
+                clean: false
+                cleanContents: true
+                preservePaths: true
+                trustSSL: true
