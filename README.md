@@ -11,7 +11,7 @@ Ogni contenuto viene rilasciato secondo la licenza indicata nel file LICENCE.txt
 In particolare:
 
 ## _covid-19-report-ita.pbix_:
-Contiene il report pubblicato all'indirizzo http://covid-19.leonidev.com<br/>Autore: [Antonio Landolfi](http://https://www.linkedin.com/in/antonio-landolfi/)<br/>Licenza: [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/) - [Visualizza](https://github.com/leoniDEV/covid-19-report-ita/blob/master/LICENCE.txt)
+Contiene il report pubblicato all'indirizzo http://covid19-ita.leonidev.com<br/>Autore: [Antonio Landolfi](http://https://www.linkedin.com/in/antonio-landolfi/)<br/>Licenza: [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/) - [Visualizza](https://github.com/leoniDEV/covid-19-report-ita/blob/master/LICENCE.txt)
 
 ## _Codice nella cartella ./src_:
 Rilasciato secondo licenza [MIT](https://github.com/leoniDEV/covid-19-report-ita/blob/master/src/COVID-19-Report-ITA.Web/LICENCE.txt)
