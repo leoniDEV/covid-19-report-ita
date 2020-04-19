@@ -33,7 +33,6 @@ stages:
         artifact: 'reportweb'
         publishLocation: 'pipeline'
 
-
 - stage: deploywebsite
   displayName: Deploy The web site
   jobs:
@@ -43,15 +42,13 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: FtpUpload@1
-            displayName: 'Upload Host'
+          - task: CopyFilesOverSSH@0
+            displayName: Upload artifact to Production
             inputs:
-              credentialsOption: 'serviceEndpoint'
-              serverEndpoint: 'FTPChannel'
-              rootDirectory: $(Pipeline.Workspace)/reportweb
-              filePatterns: '**'
-              remoteDirectory: 'covid19'
-              clean: false
-              cleanContents: true
-              preservePaths: true
-              trustSSL: true
+              sshEndpoint: 'SSH-VPS01'
+              sourceFolder: '$(Pipeline.Workspace)/reportweb'
+              contents: '**'
+              targetFolder: '/home/leonidev/www/covid19/legacy'
+              cleanTargetFolder: true
+              readyTimeout: '20000'
+              overwrite: false
