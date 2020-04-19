@@ -4,33 +4,34 @@
 }
 
 @font-face {
-    font-family: 'icomoon';
-    src: url('fonts/icomoon.eot');
-    src: url('fonts/icomoon.eot') format('embedded-opentype'),
-        url('fonts/icomoon.ttf') format('truetype'),
-        url('fonts/icomoon.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: block;
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?kcpfbk');
+  src:  url('fonts/icomoon.eot?kcpfbk#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?kcpfbk') format('truetype'),
+    url('fonts/icomoon.woff?kcpfbk') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
 }
 
 @font-face {
-    font-family: 'Comfortaa';
-    src: url('fonts/Comfortaa-VariableFont_wght.ttf') format('truetype');
-    font-weight: 200;
-    font-style: normal;
-    font-display: block;
+  font-family: 'Comfortaa';
+  src: url('fonts/Comfortaa-VariableFont_wght.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: block;
 }
 
 @font-face {
-    font-family: 'Nunito Sans';
-    src: url('fonts/NunitoSans-Bold.ttf') format('truetype');
-    font-weight: 200;
-    font-style: normal;
-    font-display: block;
+  font-family: 'Nunito Sans';
+  src: url('fonts/NunitoSans-Bold.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: block;
 }
 
-body {
+body
+{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -70,11 +71,12 @@ footer {
     align-items: center;
     width: 90vw;
     height: 64px;
+
 }
 
-    footer a {
-        text-decoration: none;
-    }
+footer a {
+    text-decoration: none;
+}
 
 .link {
     font-style: italic;
@@ -117,16 +119,15 @@ footer {
     cursor: none;
 }
 
-    .icon-heart:hover {
-        transform-origin: center;
-        animation: pulse .5s ease-in alternate infinite;
-    }
+.icon-heart:hover {
+    transform-origin: center;
+    animation: pulse .5s ease-in alternate infinite;
+}
 
 @keyframes pulse {
     0% {
         transform: scale(1);
     }
-
     100% {
         transform: scale(.5);
     }
@@ -138,14 +139,14 @@ footer {
     top: var(--offset);
 }
 
-    .animate-text:hover, .animate-text:hover::before {
-        text-shadow: 2px 3px 3px rgba(127, 127, 127, 0.45);
-    }
+.animate-text:hover, .animate-text:hover::before {
+    text-shadow: 2px 3px 3px rgba(127, 127, 127, 0.45);
+}
 
-    .animate-button:hover, .animate-button:hover::before {
-        box-shadow: 2px 3px 3px rgba(127, 127, 127, 0.45);
-        top: calc(var(--offset) * 2);
-    }
+.animate-button:hover, .animate-button:hover::before {
+    box-shadow: 2px 3px 3px rgba(127, 127, 127, 0.45);
+    top: calc(var(--offset) * 2);
+}
 
 .fa-font {
     font-family: icomoon;
@@ -171,7 +172,7 @@ footer {
     position: relative;
 }
 
-#share-header {
+#share-header{
     font-size: .7rem;
     font-weight: 600;
     margin-bottom: 2px;
