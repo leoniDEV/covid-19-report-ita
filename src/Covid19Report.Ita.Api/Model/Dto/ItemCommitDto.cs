@@ -11,6 +11,6 @@ namespace Covid19Report.Ita.Api.Model.Dto
         public string Autore { get; set; } = default!;
 
         public string Mesasggio { get; set; } = default!;
-        public DateTime Data { get; set; } = default!;
+        public string Data { get; set; } = default!;
     }
 }

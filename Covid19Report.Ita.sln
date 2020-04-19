@@ -28,8 +28,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{D1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Covid19Report.Ita.Views", "src\Covid19Report.Ita.Views\Covid19Report.Ita.Views.csproj", "{B450A834-E9D0-4E4E-BAB5-C511ECE9A891}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Covid19Report.Ita.Api.Test", "test\Covid19Report.Ita.Api.Test\Covid19Report.Ita.Api.Test.csproj", "{330F76FB-9675-45CE-9069-B20AEC04E312}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,10 +42,6 @@ Global
 		{B450A834-E9D0-4E4E-BAB5-C511ECE9A891}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B450A834-E9D0-4E4E-BAB5-C511ECE9A891}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B450A834-E9D0-4E4E-BAB5-C511ECE9A891}.Release|Any CPU.Build.0 = Release|Any CPU
-		{330F76FB-9675-45CE-9069-B20AEC04E312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{330F76FB-9675-45CE-9069-B20AEC04E312}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{330F76FB-9675-45CE-9069-B20AEC04E312}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{330F76FB-9675-45CE-9069-B20AEC04E312}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,7 +50,6 @@ Global
 		{F6890BD0-4AEE-471A-A170-05882CA01BE5} = {DA71E953-DE30-41B3-96B5-BC8B7B5400F0}
 		{D11EB6A9-FFF1-4086-ACC7-F6A20F40EC63} = {F9B28E31-9F00-4908-B02F-F2F3D376B15A}
 		{B450A834-E9D0-4E4E-BAB5-C511ECE9A891} = {DA71E953-DE30-41B3-96B5-BC8B7B5400F0}
-		{330F76FB-9675-45CE-9069-B20AEC04E312} = {6DA017D4-F602-41E0-B4DE-6F6B6AB53216}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {63A73644-97D7-40D8-9F92-F68A0595AFA1}

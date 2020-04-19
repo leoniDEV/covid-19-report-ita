@@ -19,6 +19,7 @@ namespace Covid19Report.Ita.Api.Service
         public DataCollector(IHttpClientFactory httpClientFactory, IEnumerable<IDataCollectorSerializer> dataCollectorSerializers)
         {
             httpClient = httpClientFactory.CreateClient();
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "Covid19-ita-Report-api");
             this.dataCollectorSerializers = dataCollectorSerializers;
         }
 

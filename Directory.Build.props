@@ -43,7 +43,7 @@
         <OutputLocation>$(MSBuildProjectName)\$(Configuration)</OutputLocation>
         <BaseArtifactsPath>$(BaseSolutionPath)Artifacts</BaseArtifactsPath>
         <BaseOutputPath Condition="'$(BaseOutputPath)' == ''">$(BaseArtifactsPath)\$(MSBuildProjectName)\</BaseOutputPath>
-        <PublishDir>$(BaseArtifactsPath)\Publish\$(OutputLocation)</PublishDir>
+        <PublishDir>$(BaseArtifactsPath)\Publish\$(OutputLocation)\$(RuntimeIdentifier)</PublishDir>
         <BaseIntermediateOutputPath>$(BaseArtifactsPath)\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
     </PropertyGroup>
 

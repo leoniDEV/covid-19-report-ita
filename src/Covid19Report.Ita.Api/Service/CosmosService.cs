@@ -38,7 +38,11 @@ namespace Covid19Report.Ita.Api.Service
             return result;
         }
 
-        public async Task CreateItemAsync<T>(T data, string partitionKey) => await cosmosConstainer.CreateItemAsync(data, new PartitionKey(partitionKey));
+        public async Task<HttpStatusCode> CreateItemAsync<T>(T data, string partitionKey)
+        {
+            var response = await cosmosConstainer.CreateItemAsync(data, new PartitionKey(partitionKey));
+            return response.StatusCode;
+        }
 
         public async Task<HttpStatusCode> UpdateDataAsync<T>(T data, string partitionKey)
         {

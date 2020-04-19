@@ -49,26 +49,21 @@ namespace Covid19Report.Ita.Api.Infrastructure
                 return AuthenticateResult.Fail("Invalid Header");
             }
 
-            using var cmd = sqlConnection.CreateCommand();
-            var param = cmd.CreateParameter();
-            param.ParameterName = @"@name";
-            param.SqlDbType = SqlDbType.NVarChar;
-            param.Direction = ParameterDirection.Input;
-            param.Size = 30;
-            param.Value = auth.service;
+            using var command = sqlConnection.CreateCommand();
 
-            cmd.CommandText = "select * from [user] where [name] = @name";
-            cmd.Parameters.Add(param);
+            command.CommandText = "select * from [users] where [name] = @name";
+            command.Parameters.AddWithValue("@name", auth.service);
 
             sqlConnection.Open();
 
-            using var sqlReader = await cmd.ExecuteReaderAsync();
+            using var sqlReader = await command.ExecuteReaderAsync();
 
-            if (sqlReader.HasRows)
+            if (!sqlReader.HasRows)
             {
-                sqlReader.Read();
-                string pwd = sqlReader.GetString(1);
+                return AuthenticateResult.Fail("Invalid Service or Password");
             }
+
+            sqlReader.Read();
 
             if (auth.password != sqlReader.GetString(1) || auth.service != sqlReader.GetString(0))
             {

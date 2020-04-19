@@ -2,8 +2,12 @@
 .vs/
 Artifacts/
 test/
-TestData/
 TestResults/
+TestData/
 node_modules/
 misc/
+**/*.csproj.user
 **/*.js
+**/pnpm-lock.yaml
+appsettings.DevStaging.json
+launchSettings.json

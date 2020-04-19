@@ -8,7 +8,7 @@ namespace Covid19Report.Ita.Api.Abstraction.Service
 {
     public interface ICosmosService
     {
-        public Task CreateItemAsync<T>(T data, string partitionKey);
+        public Task<HttpStatusCode> CreateItemAsync<T>(T data, string partitionKey);
         public Task<IEnumerable<T>> ReadDataAsync<T>();
         public Task<T> GetItemAsync<T>(string id, string partitionKey);
         public Task<HttpStatusCode> UpdateDataAsync<T>(T data, string partitionKey);

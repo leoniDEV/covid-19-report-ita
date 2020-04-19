@@ -4,8 +4,8 @@ namespace Covid19Report.Ita.Api.Model
 {
     public class ItemCommit
     {
-        public string Id { get; set; } = default!;
-        public string Sha { get; set; } = default!;
+        public string? Id { get; set; }
+        public string? Sha { get; set; }
         public string? Autore { get; set; }
         public string? Data { get; set; }
         public string? Messaggio { get; set; }

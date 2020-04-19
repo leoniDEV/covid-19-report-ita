@@ -4,6 +4,21 @@
         <TargetFramework>netcoreapp5.0</TargetFramework>
         <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="package.json" />
+      <Content Include="tsconfig.json" />
+    </ItemGroup>
 
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
