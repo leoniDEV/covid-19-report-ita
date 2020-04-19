@@ -26,7 +26,6 @@ using Octokit;
 namespace Covid19Report.Ita.Api.Controllers
 {
     [ApiController]
-    //[AllowAnonymous]
     [Route("api/[controller]")]
     public class CovidDataCollectorController : ControllerBase
     {
@@ -48,48 +47,9 @@ namespace Covid19Report.Ita.Api.Controllers
             covid19Services = cosmosRepository.CosmosServices["covid19-ita"].Value;
         }
 
-        [HttpPost("test")]
-        [Authorize]
-        public async Task<IActionResult> TestAsync(string? saluto, [FromBody] JsonElement? jsonBody)
-        {
-            string lastcheck = "2020-02-24T18:00:00";
-            using var command = dbConnection.CreateCommand();
-
-            command.CommandText = "select * from [lastcommit] where [id] = @id";
-            command.Parameters.AddWithValue("@id", 0);
-
-            dbConnection.Open();
-            using var sqlReader = await command.ExecuteReaderAsync();
-
-            if (sqlReader.HasRows)
-            {
-                sqlReader.Read();
-                lastcheck = sqlReader.GetString(1);
-            }
-
-            //var commitRequest = new CommitRequest()
-            //{
-            //    Since = DateTimeOffset.Parse("2020-04-13T15:55:35Z") // DateTimeOffset.Parse(lastcheck, CultureInfo.InvariantCulture)
-            //};
-            //
-            //var allCommits = await gitHubRepo.Commit.GetAll("pcm-dpc", "COVID-19", commitRequest);
-            //var changedFiles = new List<string>();
-            //
-            //foreach (var item in allCommits)
-            //{
-            //    var commit = await gitHubRepo.Commit.Get("pcm-dpc", "COVID-19", item.Sha);
-            //    changedFiles.AddRange(commit.Files.Select(f => f.Filename));
-            //}
-            //
-            //var filesDistict = changedFiles.Distinct();
-            //var files = filesDistict.Where(f => Regex.IsMatch(f, "((dati-(regioni|province)|note)/.*(\\d|it).csv|README.md)"));
-
-            return Ok(new[] { lastcheck });
-        }
-
         [HttpPost("sync")]
         [Authorize]
-        public async Task<IActionResult> SyncronizeAsync(string? resource, [FromBody]JsonElement? json)
+        public async Task<IActionResult> SyncronizeAsync(string? resource, [FromBody] JsonElement? json)
         {
             switch (resource)
             {
@@ -193,21 +153,14 @@ namespace Covid19Report.Ita.Api.Controllers
 
         private async Task<IActionResult> SyncronizeCommitAsync(JsonElement? jsonBody = null)
         {
-            var deploymnet = jsonBody?.GetProperty("resource").GetProperty("deployment");
+            JsonElement? resource = null;
             if (Request.Headers["User-Agent"] is StringValues userAgent && userAgent.Any(x => x.Contains("VSServices", StringComparison.InvariantCultureIgnoreCase)))
             {
-                string? environment = deploymnet?.GetProperty("releaseEnvironment").GetProperty("name").GetString();
-
-                if (environment != "Production")
+                resource = jsonBody?.GetProperty("resource");
+                if (resource?.GetProperty("stage").GetProperty("name").GetString() != "__default")
                 {
                     return BadRequest();
                 }
-            }
-
-            DateTimeOffset? until = null;
-            if (jsonBody is JsonElement)
-            {
-                until = deploymnet?.GetProperty("completedOn").GetString() is string finishTime ? DateTimeOffset.Parse(finishTime, CultureInfo.InvariantCulture) : DateTimeOffset.UtcNow;
             }
 
             var commitService = covid19Services["commits"];
@@ -219,7 +172,7 @@ namespace Covid19Report.Ita.Api.Controllers
 
             var request = new CommitRequest()
             {
-                Until = until
+                Until = resource?.GetProperty("run").GetProperty("finishedDate").GetString() is string finishTime ? DateTimeOffset.Parse(finishTime, CultureInfo.InvariantCulture) : DateTimeOffset.UtcNow
             };
 
             var commits = await gitHubRepo.Commit.GetAll("leonidev", "covid-19-report-ita", request, option);
