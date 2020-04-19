@@ -120,6 +120,8 @@ stages:
               inputs:
                 folderPath: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
                 jsonTargetFiles: appsettings.$(Environment.Name).json
+                enableXmlTransform: false
+                xmlTransformationRules: ''
 
             - task: CopyFilesOverSSH@0
               displayName: Upload artifact to Production
