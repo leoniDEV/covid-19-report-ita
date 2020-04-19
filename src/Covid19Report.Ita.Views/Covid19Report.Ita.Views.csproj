@@ -24,6 +24,10 @@
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.14.0-beta5" />
+    </ItemGroup>
+
     <PropertyGroup>
         <EnableNPMBuild>true</EnableNPMBuild>
         <DefaultItemExcludes>$(DefaultItemExcludes);package.json;tsconfig.json;*.yaml</DefaultItemExcludes>
