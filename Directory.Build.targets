@@ -1,0 +1,11 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <Target Name="NpmClean" AfterTargets="Clean" Condition="$(IsNPMPackage) AND $(EnableNPMClean)">
+        <Exec Command="pwsh -Command npm run $(NPMCleanCommand)"/>
+    </Target>
+
+    <Target Name="NpmBuild" AfterTargets="AfterBuild" Condition="$(IsNPMPackage) AND $(EnableNPMBuild)">
+        <Exec Command="pwsh -Command npm run $(NPMBuildCommand)"/>
+    </Target>
+
+</Project>

@@ -4,10 +4,35 @@ trigger:
     - master
   paths:
     include:
-    - src/COVID-19-Report-ITA.Web/*
+    - src/Covid19Report.Ita.Views/*
+    - src/Covid19Report.Ita.Api/*
+
 
 pool:
   vmImage: ubuntu-latest
+variables:
+- name: buildConfiguration
+  value: ${{ parameters.configuration }}
+- name: pbiGitUrl
+  value: 'https://app.powerbi.com/view?r=eyJrIjoiMjY4ODk2Y2MtMWI1Ni00M2MxLTkzNDctMTI0MjVlNTBmMWRlIiwidCI6IjU2MzRjYTUzLTc5NjUtNDAzMC1hMzBlLWE0M2NkOTkzNTMwMCIsImMiOjl9'
+- name: pbiCosmosUrl
+  value: 'https://app.powerbi.com/view?r=eyJrIjoiNTFmMTIwZTAtMWJiYy00M2I1LWEyMWUtNTNiNzM4OTY5MDViIiwidCI6IjU2MzRjYTUzLTc5NjUtNDAzMC1hMzBlLWE0M2NkOTkzNTMwMCIsImMiOjl9'
+- name: pbiReportUrl
+  value: $(pbiGitUrl)
+
+parameters:
+- name: pbiSource
+  type: string
+  default: Git
+  values:
+  - Git
+  - Cosmos
+- name: configuration
+  type: string
+  default: Release
+  values:
+  - Release
+  - Debug
 
 stages:
 - stage: build
@@ -15,43 +40,94 @@ stages:
   jobs:
   - job: build
     steps:
-    - task: Npm@1
-      displayName: Install dependecies
+
+    - task: UseDotNet@2
+      displayName: Acquire latest .Net 5 SDK
       inputs:
-        command: 'install'
-        workingDir: '$(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/'
+        packageType: 'sdk'
+        version: '5.x'
+        includePreviewVersions: true
+
     - task: Npm@1
-      displayName: Build TS code
       inputs:
+        workingDir: '$(Build.SourcesDirectory)/src/Covid19Report.Ita.Views'
         command: 'custom'
-        workingDir: '$(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/'
-        customCommand: 'run ts:compile'
-    - task: PublishPipelineArtifact@1
-      displayName: Publish artifacts
+        customCommand: 'install pnpm'
+
+    - task: DotNetCoreCLI@2
+      displayName: Build $(System.TeamProject) $(buildConfiguration)
       inputs:
-        targetPath: '$(Build.SourcesDirectory)/src/COVID-19-Report-ITA.Web/'
-        artifact: 'reportweb'
-        publishLocation: 'pipeline'
+        command: build
+        projects: src/Covid19Report.Ita.Api/*.csproj
+        arguments: --configuration $(buildConfiguration) -r linux-x64
 
+    - task: DotNetCoreCLI@2
+      displayName: Publish $(System.TeamProject) $(buildConfiguration)
+      inputs:
+        command: publish
+        publishWebProjects: false
+        zipAfterPublish: false
+        projects: src/Covid19Report.Ita.Api/*.csproj
+        arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) -r linux-x64 /p:PublishTrimmed=true --no-build'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-- stage: deploywebsite
-  displayName: Deploy The web site
-  jobs:
-  - deployment: Deploy
-    environment: WebProd
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: FtpUpload@1
-            displayName: 'Upload Host'
-            inputs:
-              credentialsOption: 'serviceEndpoint'
-              serverEndpoint: 'FTPChannel'
-              rootDirectory: $(Pipeline.Workspace)/reportweb
-              filePatterns: '**'
-              remoteDirectory: 'covid19'
-              clean: false
-              cleanContents: true
-              preservePaths: true
-              trustSSL: true
+    - publish: $(Build.ArtifactStagingDirectory)
+      displayName: Publish pipeline artifacts
+      artifact: reportweb
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+- ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+  - stage: deployTest
+    displayName: Deploy The web site in test env
+    jobs:
+    - deployment: Deploy
+      environment: Staging
+      variables:
+        pbiReportUrl: ${{ format('$(pbi{0}Url)', parameters.pbiSource) }}
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: FileTransform@2
+              inputs:
+                folderPath: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
+                jsonTargetFiles: appsettings.$(Environment.Name).json
+                enableXmlTransform: false
+                xmlTransformationRules: ''
+
+            - task: CopyFilesOverSSH@0
+              displayName: Upload artifact to Staging
+              inputs:
+                sshEndpoint: 'SSH-VPS01'
+                sourceFolder: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
+                contents: '**'
+                targetFolder: '/home/leonidev/www/covid19/staging'
+                cleanTargetFolder: true
+                readyTimeout: '20000'
+                overwrite: false
+
+- ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+  - stage: deployProd
+    displayName: Deploy The web site in Prod
+    jobs:
+    - deployment: Deploy
+      environment: Production
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: FileTransform@2
+              inputs:
+                folderPath: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
+                jsonTargetFiles: appsettings.$(Environment.Name).json
+
+            - task: CopyFilesOverSSH@0
+              displayName: Upload artifact to Production
+              inputs:
+                sshEndpoint: 'SSH-VPS01'
+                sourceFolder: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
+                contents: '**'
+                targetFolder: '/home/leonidev/www/covid19/prod'
+                cleanTargetFolder: true
+                readyTimeout: '20000'
+                overwrite: false

@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp5.0</TargetFramework>
+        <Platforms>AnyCPU</Platforms>
+        <UserSecretsId>aead7003-5e53-4209-84c6-a75a02992055</UserSecretsId>
+        <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <Optimize>false</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <EnvironmentName>Production</EnvironmentName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <EnvironmentName>Development</EnvironmentName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+      <DebugType>none</DebugType>
+      <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Update="appsettings.Development.json">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.14.0-beta5" />
+        <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.8.0" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0-preview2.20084.1" />
+        <PackageReference Include="Octokit" Version="0.47.0" />
+        <PackageReference Include="System.Linq.Async" Version="4.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Covid19Report.Ita.Views\Covid19Report.Ita.Views.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <TrimmerRootAssembly Include="System.Runtime" />
+        <TrimmerRootAssembly Include="System.Text.Encoding.CodePages" />
+    </ItemGroup>
+</Project>

@@ -1,8 +1,13 @@
 .vscode/
 .vs/
 Artifacts/
-**/*.Ita.*
-Directory*
+test/
+TestResults/
+TestData/
 node_modules/
 misc/
+**/*.csproj.user
 **/*.js
+**/pnpm-lock.yaml
+appsettings.DevStaging.json
+launchSettings.json
