@@ -36,7 +36,7 @@ namespace Covid19Report.Ita.Api.Controllers
         private readonly SqlConnection dbConnection;
         private readonly IOptions<GitHubConfig> gitHubConfig;
         private readonly IDictionary<string, ICosmosService> covid19Services;
-        private GitHubCommit? lastCommit;
+
 
         public CovidDataCollectorController(ICosmosRepository cosmosRepository, IGitHubClient gitHubClient, IDataCollector dataCollector, DbConnection dbConnection, IOptions<GitHubConfig> gitHubConfig)
         {
@@ -55,10 +55,29 @@ namespace Covid19Report.Ita.Api.Controllers
             switch (resource)
             {
                 case "commits":
-                    return await SyncronizeCommitAsync(json);
+                    var response = await SyncronizeCommitAsync(json);
+                    return new StatusCodeResult((int)response);
 
                 case "covid-data":
-                    return await CheckLastCommitAsync() ? await SyncCovidDataAsync() : Ok();
+                    var check = await CheckLastCommitAsync();
+
+                    if (check.IsCurrent)
+                    {
+                        return Ok();
+                    }
+
+                    if (await SyncDataListAsync() != HttpStatusCode.OK)
+                    {
+                        return BadRequest();
+                    }
+
+                    if (await SyncCovidDataAsync() == HttpStatusCode.OK)
+                    {
+                        response = await UpdateLastCommitDateAsync(check.LastCommit);
+                        return new StatusCodeResult((int)response);
+                    }
+
+                    return BadRequest();
 
                 default:
                     break;
@@ -67,68 +86,63 @@ namespace Covid19Report.Ita.Api.Controllers
             return BadRequest();
         }
 
-        private async Task<bool> CheckLastCommitAsync()
+        private async Task<HttpStatusCode> SyncCovidDataAsync()
         {
-            //lastCommit = await gitHubRepo.Commit.Get("pcm-dpc", "COVID-19", "master");
-            //using var command = dbConnection.CreateCommand();
-            //
-            //command.CommandText = "select * from [lastcommit] where [id] = @id";
-            //command.Parameters.AddWithValue("@id", 0);
-            //
-            //dbConnection.Open();
-            //using var sqlReader = await command.ExecuteReaderAsync();
-            //
-            //if (sqlReader.HasRows)
-            //{
-            //    sqlReader.Read();
-            //
-            //    if (lastCommit.Commit.Author.Date.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture) == sqlReader.GetString(1))
-            //    {
-            //        dbConnection.Close();
-            //        return false;
-            //    }
-            //}
-            //
-            //dbConnection.Close();
-            return true;
+            return HttpStatusCode.OK;
         }
 
-        private async Task<IActionResult> SyncCovidDataAsync()
+        private async Task<(bool IsCurrent, GitHubCommit LastCommit)> CheckLastCommitAsync()
         {
-            var dateListResponse = await SyncDataListAsync();
+            var lastCommit = await gitHubRepo.Commit.Get("pcm-dpc", "COVID-19", "master");
+            string lastCommitDate = lastCommit.Commit.Author.Date.ToStringWithSeparatorAndZone(CultureInfo.InvariantCulture);
 
-            //if (dateListResponse.StatusCode != (int)HttpStatusCode.Created)
-            //{
-            //    return BadRequest();
-            //}
-            //
-            //if (lastCommit is null)
-            //{
-            //    lastCommit = await gitHubRepo.Commit.Get("pcm-dpc", "COVID-19", "master");
-            //}
-            //
-            //using var command = dbConnection.CreateCommand();
-            //
-            //command.Parameters.AddWithValue("@id", 0);
-            //command.Parameters.AddWithValue("@data", lastCommit.Commit.Author.Date.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture));
-            //command.Parameters.AddWithValue("@sha", lastCommit.Sha);
-            //
-            //command.CommandText = "update [lastcommit] set [data] = @data, [sha] = @sha where[id] = @id";
-            //
-            //dbConnection.Open();
-            //int rows = await command.ExecuteNonQueryAsync();
-            //
-            //if (rows == 1)
-            //{
-            //    dbConnection.Close();
-                return Ok();
-            //}
-            //
-            //dbConnection.Close();
-            //return BadRequest();
+            using var command = dbConnection.CreateCommand();
+
+            command.CommandText = "select * from [lastcommit] where [id] = @id";
+            command.Parameters.AddWithValue("@id", 0);
+
+            dbConnection.Open();
+            using var sqlReader = await command.ExecuteReaderAsync();
+
+            if (sqlReader.HasRows)
+            {
+                sqlReader.Read();
+
+                if (lastCommitDate == sqlReader.GetString(1))
+                {
+                    dbConnection.Close();
+                    return (true, lastCommit);
+                }
+            }
+
+            dbConnection.Close();
+            return (false, lastCommit);
         }
 
-        private async Task<StatusCodeResult> SyncDataListAsync()
+        private async Task<HttpStatusCode> UpdateLastCommitDateAsync(GitHubCommit lastCommit)
+        {
+            using var command = dbConnection.CreateCommand();
+
+            command.Parameters.AddWithValue("@id", 0);
+            command.Parameters.AddWithValue("@data", lastCommit.Commit.Author.Date.ToStringWithSeparatorAndZone(CultureInfo.InvariantCulture));
+            command.Parameters.AddWithValue("@sha", lastCommit.Sha);
+
+            command.CommandText = "update [lastcommit] set [data] = @data, [sha] = @sha where[id] = @id";
+
+            dbConnection.Open();
+            int rows = await command.ExecuteNonQueryAsync();
+
+            if (rows == 1)
+            {
+                dbConnection.Close();
+                return HttpStatusCode.OK;
+            }
+
+            dbConnection.Close();
+            return HttpStatusCode.BadRequest;
+        }
+
+        private async Task<HttpStatusCode> SyncDataListAsync()
         {
             string? url = gitHubConfig.Value.DateListUrl;
             var dateListService = covid19Services["dateTable"];
@@ -157,14 +171,14 @@ namespace Covid19Report.Ita.Api.Controllers
                 var response = await dateListService.UpdateDataAsync(dateItem, dateItem.PartitionKey);
                 if (!new[] { HttpStatusCode.OK, HttpStatusCode.Created }.Contains(response))
                 {
-                    return StatusCode((int)response);
+                    return response;
                 }
             }
 
-            return new StatusCodeResult(201);
+            return HttpStatusCode.OK;
         }
 
-        private async Task<IActionResult> SyncronizeCommitAsync(JsonElement? jsonBody = null)
+        private async Task<HttpStatusCode> SyncronizeCommitAsync(JsonElement? jsonBody = null)
         {
             JsonElement? resource = null;
             if (Request.Headers["User-Agent"] is StringValues userAgent && userAgent.Any(x => x.Contains("VSServices", StringComparison.InvariantCultureIgnoreCase)))
@@ -172,7 +186,7 @@ namespace Covid19Report.Ita.Api.Controllers
                 resource = jsonBody?.GetProperty("resource");
                 if (resource?.GetProperty("stage").GetProperty("name").GetString() != "deployProd")
                 {
-                    return BadRequest();
+                    return HttpStatusCode.BadRequest;
                 }
             }
 
@@ -192,7 +206,7 @@ namespace Covid19Report.Ita.Api.Controllers
 
             if (commits.Count == 0)
             {
-                return Ok();
+                return HttpStatusCode.OK;
             }
 
             for (int i = 0; i < commits.Count; i++)
@@ -212,11 +226,11 @@ namespace Covid19Report.Ita.Api.Controllers
                 var response = await commitService.UpdateDataAsync(itemCommit, itemCommit.PartitionKey!);
                 if (!new[] { HttpStatusCode.OK, HttpStatusCode.Created }.Contains(response))
                 {
-                    return StatusCode((int)response);
+                    return response;
                 }
             }
 
-            return Ok();
+            return HttpStatusCode.OK;
         }
     }
 }
