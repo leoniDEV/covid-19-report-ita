@@ -10,4 +10,5 @@ misc/
 **/*.js
 **/pnpm-lock.yaml
 appsettings.DevStaging.json
-launchSettings.json
+**/Properties/
+!**/launcheSettings.json

@@ -52,7 +52,7 @@ namespace Covid19Report.Ita.Api
             services.AddApplicationInsightsTelemetry(appInsightOptions);
 
             services.AddScoped<IGitHubClient, GitHubClient>(sp => {
-                return new GitHubClient(new ProductHeaderValue("covid19-ita-report"))
+                return new GitHubClient(new ProductHeaderValue("Covid19-ita-Report-api"))
                 {
                     Credentials = new Credentials(Configuration.GetSection("GitHubConfig:GitHubApiKey").Value)
                 };

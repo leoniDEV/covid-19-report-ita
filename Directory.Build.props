@@ -19,6 +19,30 @@
         <DebugSymbols>true</DebugSymbols>
         <Optimize>true</Optimize>
     </PropertyGroup>
+    
+    <PropertyGroup>
+        <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
+        <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+        <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
+    </PropertyGroup>
+
+    <Choose>
+        <When Condition="$(IsWindows)">
+            <PropertyGroup>
+                <DefineConstants>Windows;$(DefineConstants)</DefineConstants>
+            </PropertyGroup>
+        </When>
+        <When Condition="$(IsOSX)">
+            <PropertyGroup>
+                <DefineConstants>Linux;$(DefineConstants)</DefineConstants>
+            </PropertyGroup>
+        </When>
+        <Otherwise>
+            <PropertyGroup>
+                <DefineConstants>OSX;$(DefineConstants)</DefineConstants>
+            </PropertyGroup>
+        </Otherwise>
+    </Choose>
 
     <PropertyGroup>
         <SYSTEM_SERVERTYPE Condition="$(SYSTEM_SERVERTYPE) == ''">Local</SYSTEM_SERVERTYPE>

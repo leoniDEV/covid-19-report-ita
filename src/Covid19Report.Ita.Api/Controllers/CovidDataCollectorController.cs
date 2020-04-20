@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 using Covid19Report.Ita.Api.Abstraction;
 using Covid19Report.Ita.Api.Abstraction.Service;
+using Covid19Report.Ita.Api.Extensions;
 using Covid19Report.Ita.Api.Infrastructure;
 using Covid19Report.Ita.Api.Model;
 using Covid19Report.Ita.Api.Model.Dto;
@@ -68,66 +69,66 @@ namespace Covid19Report.Ita.Api.Controllers
 
         private async Task<bool> CheckLastCommitAsync()
         {
-            lastCommit = await gitHubRepo.Commit.Get("pcm-dpc", "COVID-19", "master");
-            using var command = dbConnection.CreateCommand();
-
-            command.CommandText = "select * from [lastcommit] where [id] = @id";
-            command.Parameters.AddWithValue("@id", 0);
-
-            dbConnection.Open();
-            using var sqlReader = await command.ExecuteReaderAsync();
-
-            if (sqlReader.HasRows)
-            {
-                sqlReader.Read();
-
-                if (lastCommit.Commit.Author.Date.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture) == sqlReader.GetString(1))
-                {
-                    dbConnection.Close();
-                    return false;
-                }
-            }
-
-            dbConnection.Close();
+            //lastCommit = await gitHubRepo.Commit.Get("pcm-dpc", "COVID-19", "master");
+            //using var command = dbConnection.CreateCommand();
+            //
+            //command.CommandText = "select * from [lastcommit] where [id] = @id";
+            //command.Parameters.AddWithValue("@id", 0);
+            //
+            //dbConnection.Open();
+            //using var sqlReader = await command.ExecuteReaderAsync();
+            //
+            //if (sqlReader.HasRows)
+            //{
+            //    sqlReader.Read();
+            //
+            //    if (lastCommit.Commit.Author.Date.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture) == sqlReader.GetString(1))
+            //    {
+            //        dbConnection.Close();
+            //        return false;
+            //    }
+            //}
+            //
+            //dbConnection.Close();
             return true;
         }
 
         private async Task<IActionResult> SyncCovidDataAsync()
         {
-            var dateListResponse = await GetDataListAsync();
+            var dateListResponse = await SyncDataListAsync();
 
-            if (dateListResponse.StatusCode != (int)HttpStatusCode.Created)
-            {
-                return BadRequest();
-            }
-
-            if (lastCommit is null)
-            {
-                lastCommit = await gitHubRepo.Commit.Get("pcm-dpc", "COVID-19", "master");
-            }
-
-            using var command = dbConnection.CreateCommand();
-
-            command.Parameters.AddWithValue("@id", 0);
-            command.Parameters.AddWithValue("@data", lastCommit.Commit.Author.Date.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture));
-            command.Parameters.AddWithValue("@sha", lastCommit.Sha);
-
-            command.CommandText = "update [lastcommit] set [data] = @data, [sha] = @sha where[id] = @id";
-
-            dbConnection.Open();
-            int rows = await command.ExecuteNonQueryAsync();
-
-            if (rows == 1)
-            {
-                dbConnection.Close();
+            //if (dateListResponse.StatusCode != (int)HttpStatusCode.Created)
+            //{
+            //    return BadRequest();
+            //}
+            //
+            //if (lastCommit is null)
+            //{
+            //    lastCommit = await gitHubRepo.Commit.Get("pcm-dpc", "COVID-19", "master");
+            //}
+            //
+            //using var command = dbConnection.CreateCommand();
+            //
+            //command.Parameters.AddWithValue("@id", 0);
+            //command.Parameters.AddWithValue("@data", lastCommit.Commit.Author.Date.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture));
+            //command.Parameters.AddWithValue("@sha", lastCommit.Sha);
+            //
+            //command.CommandText = "update [lastcommit] set [data] = @data, [sha] = @sha where[id] = @id";
+            //
+            //dbConnection.Open();
+            //int rows = await command.ExecuteNonQueryAsync();
+            //
+            //if (rows == 1)
+            //{
+            //    dbConnection.Close();
                 return Ok();
-            }
-
-            dbConnection.Close();
-            return BadRequest();
+            //}
+            //
+            //dbConnection.Close();
+            //return BadRequest();
         }
 
-        private async Task<StatusCodeResult> GetDataListAsync()
+        private async Task<StatusCodeResult> SyncDataListAsync()
         {
             string? url = gitHubConfig.Value.DateListUrl;
             var dateListService = covid19Services["dateTable"];
@@ -141,7 +142,19 @@ namespace Covid19Report.Ita.Api.Controllers
 
             foreach (var item in dateList)
             {
-                var response = await dateListService.CreateItemAsync(item, "covid19-ita");
+#if Windows
+                string date = TimeZoneInfo.ConvertTimeToUtc(item.Data, TimeZoneInfo.FindSystemTimeZoneById("Central Europe Standard Time")).ToStringWithSeparatorAndZone(CultureInfo.InvariantCulture);
+#endif
+#if Linux
+                string date = TimeZoneInfo.ConvertTimeToUtc(item.Data, TimeZoneInfo.FindSystemTimeZoneById("Europe/Rome")).ToStringWithSeparatorAndZone(CultureInfo.InvariantCulture);
+#endif
+                var dateItem = new ItemDate
+                {
+                    Id = date,
+                    PartitionKey = date
+                };
+
+                var response = await dateListService.UpdateDataAsync(dateItem, dateItem.PartitionKey);
                 if (!new[] { HttpStatusCode.OK, HttpStatusCode.Created }.Contains(response))
                 {
                     return StatusCode((int)response);
@@ -157,7 +170,7 @@ namespace Covid19Report.Ita.Api.Controllers
             if (Request.Headers["User-Agent"] is StringValues userAgent && userAgent.Any(x => x.Contains("VSServices", StringComparison.InvariantCultureIgnoreCase)))
             {
                 resource = jsonBody?.GetProperty("resource");
-                if (resource?.GetProperty("stage").GetProperty("name").GetString() != "__default")
+                if (resource?.GetProperty("stage").GetProperty("name").GetString() != "deployProd")
                 {
                     return BadRequest();
                 }
@@ -189,7 +202,7 @@ namespace Covid19Report.Ita.Api.Controllers
                 {
                     Id = i.ToString(CultureInfo.InvariantCulture),
                     Autore = currentCommit.Author.Login,
-                    Data = currentCommit.Commit.Author.Date.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture),
+                    Data = currentCommit.Commit.Author.Date.ToStringWithSeparatorAndZone(CultureInfo.InvariantCulture),
                     Sha = currentCommit.Sha,
                     Messaggio = currentCommit.Commit.Message,
                     Url = currentCommit.HtmlUrl,
