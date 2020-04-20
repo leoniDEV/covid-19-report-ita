@@ -101,7 +101,7 @@ stages:
                 sshEndpoint: 'SSH-VPS01'
                 sourceFolder: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
                 contents: '**'
-                targetFolder: '/home/leonidev/www/covid19/staging'
+                targetFolder: 'covid19/staging'
                 cleanTargetFolder: true
                 readyTimeout: '20000'
                 overwrite: false
@@ -116,6 +116,23 @@ stages:
         runOnce:
           deploy:
             steps:
+            - download: none
+            - task: SSH@0
+              displayName: Promozione Staging to Prod
+              inputs:
+                sshEndpoint: 'SSH-VPS01'
+                runOptions: 'commands'
+                commands: 'pwsh -c promote.ps1 -project covid19 -fromStage staging -tostage prod -name Covid19Report.Ita.Api'
+                readyTimeout: '20000'
+
+            - task: DownloadPipelineArtifact@2
+              displayName: Applica config per PRod env
+              inputs:
+                buildType: 'current'
+                artifactName: 'reportweb'
+                itemPattern: 'appsetting.Production.json'
+                 targetPath: '$(Pipeline.Workspace)/reportweb'
+
             - task: FileTransform@2
               inputs:
                 folderPath: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
@@ -129,7 +146,15 @@ stages:
                 sshEndpoint: 'SSH-VPS01'
                 sourceFolder: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
                 contents: '**'
-                targetFolder: '/home/leonidev/www/covid19/prod'
+                targetFolder: 'covid19/prod'
                 cleanTargetFolder: true
                 readyTimeout: '20000'
                 overwrite: false
+
+            - task: SSH@0
+              displayName: Avvia il servizio
+              inputs:
+                sshEndpoint: 'SSH-VPS01'
+                runOptions: 'commands'
+                commands: 'pwsh -f fire.ps1 -project covid19 -stage prod'
+                readyTimeout: '20000'
