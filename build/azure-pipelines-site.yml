@@ -131,7 +131,7 @@ stages:
                 buildType: 'current'
                 artifactName: 'reportweb'
                 itemPattern: 'appsetting.Production.json'
-                 targetPath: '$(Pipeline.Workspace)/reportweb'
+                targetPath: '$(Pipeline.Workspace)/reportweb'
 
             - task: FileTransform@2
               inputs:
