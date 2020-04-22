@@ -106,6 +106,22 @@ stages:
                 readyTimeout: '20000'
                 overwrite: false
 
+            - task: SSH@0
+              displayName: Inizializza la nuova istanza
+              inputs:
+                sshEndpoint: 'SSH-VPS01'
+                runOptions: 'commands'
+                commands: 'pwsh -f init.ps1 -project covid19 -stage staging -name Covid19Report.Ita.Api'
+                readyTimeout: '20000'
+
+            - task: SSH@0
+              displayName: Avvia il servizio
+              inputs:
+                sshEndpoint: 'SSH-VPS01'
+                runOptions: 'commands'
+                commands: 'pwsh -f fire.ps1 -project covid19 -stage prod'
+                readyTimeout: '20000'
+
 - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
   - stage: deployProd
     displayName: Deploy The web site in Prod
@@ -122,7 +138,7 @@ stages:
               inputs:
                 sshEndpoint: 'SSH-VPS01'
                 runOptions: 'commands'
-                commands: 'pwsh -c promote.ps1 -project covid19 -fromStage staging -tostage prod -name Covid19Report.Ita.Api'
+                commands: 'pwsh -f promote.ps1 -project covid19 -fromStage staging -tostage prod -name Covid19Report.Ita.Api'
                 readyTimeout: '20000'
 
             - task: DownloadPipelineArtifact@2
