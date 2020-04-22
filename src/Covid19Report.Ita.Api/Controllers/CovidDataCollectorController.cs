@@ -37,7 +37,6 @@ namespace Covid19Report.Ita.Api.Controllers
         private readonly IOptions<GitHubConfig> gitHubConfig;
         private readonly IDictionary<string, ICosmosService> covid19Services;
 
-
         public CovidDataCollectorController(ICosmosRepository cosmosRepository, IGitHubClient gitHubClient, IDataCollector dataCollector, DbConnection dbConnection, IOptions<GitHubConfig> gitHubConfig)
         {
             this.cosmosRepository = cosmosRepository;
@@ -59,21 +58,21 @@ namespace Covid19Report.Ita.Api.Controllers
                     return new StatusCodeResult((int)response);
 
                 case "covid-data":
-                    var check = await CheckLastCommitAsync();
+                    (bool check, var commit) = await CheckLastCommitAsync();
 
-                    if (check.IsCurrent)
+                    if (check)
                     {
-                        return Ok();
+                        return NoContent();
                     }
 
-                    if (await SyncDataListAsync() != HttpStatusCode.OK)
+                    if (await SyncDataListAsync() != HttpStatusCode.NoContent)
                     {
                         return BadRequest();
                     }
 
-                    if (await SyncCovidDataAsync() == HttpStatusCode.OK)
+                    if (await SyncCovidDataAsync() == HttpStatusCode.NoContent)
                     {
-                        response = await UpdateLastCommitDateAsync(check.LastCommit);
+                        response = await UpdateLastCommitDateAsync(commit);
                         return new StatusCodeResult((int)response);
                     }
 
@@ -88,7 +87,7 @@ namespace Covid19Report.Ita.Api.Controllers
 
         private async Task<HttpStatusCode> SyncCovidDataAsync()
         {
-            return HttpStatusCode.OK;
+            return HttpStatusCode.NotImplemented;
         }
 
         private async Task<(bool IsCurrent, GitHubCommit LastCommit)> CheckLastCommitAsync()
@@ -135,7 +134,7 @@ namespace Covid19Report.Ita.Api.Controllers
             if (rows == 1)
             {
                 dbConnection.Close();
-                return HttpStatusCode.OK;
+                return HttpStatusCode.NoContent;
             }
 
             dbConnection.Close();
@@ -175,7 +174,7 @@ namespace Covid19Report.Ita.Api.Controllers
                 }
             }
 
-            return HttpStatusCode.OK;
+            return HttpStatusCode.NoContent;
         }
 
         private async Task<HttpStatusCode> SyncronizeCommitAsync(JsonElement? jsonBody = null)
@@ -206,7 +205,7 @@ namespace Covid19Report.Ita.Api.Controllers
 
             if (commits.Count == 0)
             {
-                return HttpStatusCode.OK;
+                return HttpStatusCode.NoContent;
             }
 
             for (int i = 0; i < commits.Count; i++)
@@ -230,7 +229,7 @@ namespace Covid19Report.Ita.Api.Controllers
                 }
             }
 
-            return HttpStatusCode.OK;
+            return HttpStatusCode.NoContent;
         }
     }
 }
