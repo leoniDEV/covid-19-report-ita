@@ -23,7 +23,7 @@ variables:
 parameters:
 - name: pbiSource
   type: string
-  default: Git
+  default: Cosmos
   values:
   - Git
   - Cosmos
