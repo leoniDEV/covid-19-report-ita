@@ -165,7 +165,7 @@ stages:
                 targetFolder: 'covid19/prod'
                 cleanTargetFolder: false
                 readyTimeout: '20000'
-                overwrite: false
+                overwrite: true
 
             - task: SSH@0
               displayName: Avvia il servizio
