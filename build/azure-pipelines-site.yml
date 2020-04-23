@@ -119,7 +119,7 @@ stages:
               inputs:
                 sshEndpoint: 'SSH-VPS01'
                 runOptions: 'commands'
-                commands: 'pwsh -f fire.ps1 -project covid19 -stage prod'
+                commands: 'pwsh -f fire.ps1 -project covid19 -stage staging'
                 readyTimeout: '20000'
 
 - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
@@ -142,11 +142,11 @@ stages:
                 readyTimeout: '20000'
 
             - task: DownloadPipelineArtifact@2
-              displayName: Applica config per PRod env
+              displayName: Applica config per Prod env
               inputs:
                 buildType: 'current'
                 artifactName: 'reportweb'
-                itemPattern: 'appsetting.Production.json'
+                itemPattern: '**/appsettings.Production.json'
                 targetPath: '$(Pipeline.Workspace)/reportweb'
 
             - task: FileTransform@2
