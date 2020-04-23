@@ -163,7 +163,7 @@ stages:
                 sourceFolder: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
                 contents: '**'
                 targetFolder: 'covid19/prod'
-                cleanTargetFolder: true
+                cleanTargetFolder: false
                 readyTimeout: '20000'
                 overwrite: false
 
