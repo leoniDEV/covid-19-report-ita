@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -12,7 +14,7 @@ namespace Covid19Report.Ita.Api.Service
     {
         public SerializerKind SerializerKind { get => SerializerKind.Json; }
 
-        public async Task<T> GetDateAsync<T>(Stream data, JsonSerializerOptions? jsonSerializerOptions = null)
+        public async Task<T> GetDataAsync<T>(Stream data, JsonSerializerOptions? jsonSerializerOptions = null)
         {
             JsonSerializerOptions? options;
 
@@ -38,11 +40,11 @@ namespace Covid19Report.Ita.Api.Service
             }
         }
 
-        public async Task<T> GetDateAsync<T>(string data, JsonSerializerOptions? jsonSerializerOptions = null)
+        public async Task<T> GetDataAsync<T>(string data, JsonSerializerOptions? jsonSerializerOptions = null)
         {
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(data));
 
-            return await GetDateAsync<T>(stream, jsonSerializerOptions);
+            return await GetDataAsync<T>(stream, jsonSerializerOptions);
         }
     }
 }
