@@ -18,7 +18,6 @@ using Covid19Report.Ita.Api.Model.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
@@ -36,7 +35,6 @@ namespace Covid19Report.Ita.Api.Controllers
         private readonly SqlConnection dbConnection;
         private readonly IOptions<GitHubConfig> gitHubConfig;
         private readonly IDictionary<string, ICosmosService> covid19Services;
-
 
         public CovidDataCollectorController(ICosmosRepository cosmosRepository, IGitHubClient gitHubClient, IDataCollector dataCollector, DbConnection dbConnection, IOptions<GitHubConfig> gitHubConfig)
         {

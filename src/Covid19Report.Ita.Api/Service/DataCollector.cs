@@ -30,7 +30,7 @@ namespace Covid19Report.Ita.Api.Service
 
             currentCollectorSerializer = dataCollectorSerializers.Single(dc => dc.SerializerKind == serializerKind);
 
-            return await currentCollectorSerializer.GetDateAsync<T>(content, jsonSerializerOptions);
+            return await currentCollectorSerializer.GetDataAsync<T>(content, jsonSerializerOptions);
         }
     }
 }

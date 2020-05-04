@@ -19,11 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Covid19Report.Ita.Api", "sr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{D11EB6A9-FFF1-4086-ACC7-F6A20F40EC63}"
 	ProjectSection(SolutionItems) = preProject
-		TestData\1.it-Dati_-andamento-nazionale.md = TestData\1.it-Dati_-andamento-nazionale.md
 		TestData\cosmos-date.json = TestData\cosmos-date.json
 		TestData\dpc-covid19-ita-andamento-nazionale.json = TestData\dpc-covid19-ita-andamento-nazionale.json
-		TestData\dpc-covid19-ita-province-20200224.csv = TestData\dpc-covid19-ita-province-20200224.csv
+		TestData\dpc-covid19-ita-province-20200429-min.csv = TestData\dpc-covid19-ita-province-20200429-min.csv
+		TestData\dpc-covid19-ita-province-20200429.csv = TestData\dpc-covid19-ita-province-20200429.csv
+		TestData\dpc-covid19-ita-regioni-20200316-min.csv = TestData\dpc-covid19-ita-regioni-20200316-min.csv
+		TestData\dpc-covid19-ita-regioni-20200316.csv = TestData\dpc-covid19-ita-regioni-20200316.csv
 		TestData\github-commits.json = TestData\github-commits.json
+		TestData\README.md = TestData\README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Covid19Report.Ita.Views", "src\Covid19Report.Ita.Views\Covid19Report.Ita.Views.csproj", "{B450A834-E9D0-4E4E-BAB5-C511ECE9A891}"
