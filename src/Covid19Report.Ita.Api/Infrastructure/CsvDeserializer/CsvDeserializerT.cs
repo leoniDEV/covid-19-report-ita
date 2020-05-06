@@ -57,10 +57,11 @@ namespace Covid19Report.Ita.Api.Infrastructure.CsvDeserializer
             while (true)
             {
                 (bool isCancelled, bool isCompleted) result;
+               
                 try
                 {
                     result = await CsvDeserializer.ParseLineAsync(pipeReader, recordMemory, false, fieldDelimiter);
-                    if (result.isCancelled)
+                    if (result.isCancelled || result.isCompleted)
                     {
                         break;
                     }
@@ -85,11 +86,6 @@ namespace Covid19Report.Ita.Api.Infrastructure.CsvDeserializer
                 {
                     recordMemory.Span.Clear();
                     yield return (T)istance;
-                }
-
-                if (result.isCompleted)
-                {
-                    break;
                 }
             }
 

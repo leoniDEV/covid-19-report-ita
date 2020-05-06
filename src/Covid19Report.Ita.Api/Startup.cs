@@ -61,6 +61,7 @@ namespace Covid19Report.Ita.Api
             services.AddSingleton<ICosmosClientFactory, CosmosClientFactory>();
             services.AddSingleton<ICosmosServiceFactory, CosmosServiceFactory>();
             services.AddScoped<IDataCollectorSerializer, JsonDataCollectorSerializer>();
+            services.AddScoped<IDataCollectorSerializer, CsvDataCollectorSerializer>();
             services.AddScoped<IDataCollector, DataCollector>();
             services.AddScoped<ICosmosRepository, CosmosRepository>();
             services.AddTransient<DbConnection>(sp => new SqlConnection(Configuration.GetConnectionString("covidDb")));

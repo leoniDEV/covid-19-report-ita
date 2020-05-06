@@ -6,8 +6,6 @@ namespace Covid19Report.Ita.Api.Infrastructure.CsvDeserializer
 {
     internal static class CsvParser
     {
-        private static readonly ReadOnlyMemory<char> newLine = Environment.NewLine.AsMemory();
-
         public static ReadOnlySpan<char> ParseField(ref SequenceReader<byte> sequenceReader, byte delimiter, bool isEol, Span<char> readResult)
         {
             if (!sequenceReader.TryReadTo(out ReadOnlySpan<byte> readByte, delimiter))
@@ -20,15 +18,15 @@ namespace Covid19Report.Ita.Api.Infrastructure.CsvDeserializer
 
                 int lenght = Encoding.UTF8.GetChars(sequenceReader.UnreadSequence, readResult);
                 sequenceReader.AdvanceToEnd();
-                return readResult.Slice(0, lenght);
+                return readResult.Slice(0, lenght).TrimEnd('\r');
             }
 
-            return readResult.Slice(0, Encoding.UTF8.GetChars(readByte, readResult));
+            return readResult.Slice(0, Encoding.UTF8.GetChars(readByte.TrimEnd((byte)13), readResult));
         }
 
         public static (bool isFound, SequencePosition? position) FindEol(in ReadOnlySequence<byte> buffer)
         {
-            var eolPosition = buffer.PositionOf((byte)newLine.Span[0]);
+            var eolPosition = buffer.PositionOf((byte)10);
             return eolPosition is SequencePosition ? (true, eolPosition) : (false, eolPosition);
         }
     }

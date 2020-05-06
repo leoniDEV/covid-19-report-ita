@@ -9,9 +9,9 @@ namespace Covid19Report.Ita.Api.Infrastructure.CsvDeserializer
 {
     public static class CsvDeserializer
     {
-        public static IAsyncEnumerable<T> DeserializeAsync<T>(Stream data, CsvParserOptions? parsserOptions = null)
+        public static IAsyncEnumerable<T> DeserializeAsync<T>(Stream data, CsvParserOptions? parserOptions = null)
         {
-            var deserializer = Create<T>(parsserOptions);
+            var deserializer = Create<T>(parserOptions);
             return deserializer.DeserializeAsync(data);
         }
 
@@ -40,7 +40,7 @@ namespace Covid19Report.Ita.Api.Infrastructure.CsvDeserializer
 
                 if (isEol && recordBuffer.IsEmpty)
                 {
-                    var advance = eolPosition is null ? buffer.End : buffer.GetPosition(Environment.NewLine.Length, eolPosition.Value);
+                    var advance = eolPosition is null ? buffer.End : buffer.GetPosition(1, eolPosition.Value);
 
                     reader.AdvanceTo(advance);
                     break;

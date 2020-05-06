@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Covid19Report.Ita.Api.Abstraction;
 using Covid19Report.Ita.Api.Infrastructure;
@@ -14,37 +12,29 @@ namespace Covid19Report.Ita.Api.Service
     {
         public SerializerKind SerializerKind { get => SerializerKind.Json; }
 
-        public async Task<T> GetDataAsync<T>(Stream data, JsonSerializerOptions? jsonSerializerOptions = null)
+        public async IAsyncEnumerable<T> GetDataAsync<T>(Stream data)
         {
             JsonSerializerOptions? options;
 
-            if (!(jsonSerializerOptions is null))
+            options = new JsonSerializerOptions
             {
-                options = jsonSerializerOptions;
-                if (options.PropertyNamingPolicy is null)
-                {
-                    options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                }
-            }
-            else
-            {
-                options = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                };
-            }
-
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IgnoreNullValues = false,
+            };
             using (data)
             {
-                return await JsonSerializer.DeserializeAsync<T>(data, options);
+                yield return await JsonSerializer.DeserializeAsync<T>(data, options);
             }
         }
 
-        public async Task<T> GetDataAsync<T>(string data, JsonSerializerOptions? jsonSerializerOptions = null)
+        public async IAsyncEnumerable<T> GetDataAsync<T>(string data)
         {
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(data));
 
-            return await GetDataAsync<T>(stream, jsonSerializerOptions);
+            await foreach (var item in GetDataAsync<T>(stream))
+            {
+                yield return item;
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{D1
 		TestData\dpc-covid19-ita-province-20200429.csv = TestData\dpc-covid19-ita-province-20200429.csv
 		TestData\dpc-covid19-ita-regioni-20200316-min.csv = TestData\dpc-covid19-ita-regioni-20200316-min.csv
 		TestData\dpc-covid19-ita-regioni-20200316.csv = TestData\dpc-covid19-ita-regioni-20200316.csv
-		TestData\github-commits.json = TestData\github-commits.json
+		TestData\leonidev-commits.json = TestData\leonidev-commits.json
 		TestData\README.md = TestData\README.md
 	EndProjectSection
 EndProject
