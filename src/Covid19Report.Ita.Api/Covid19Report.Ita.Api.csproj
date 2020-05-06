@@ -43,7 +43,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0-beta1" />
         <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.9.0-preview" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0-preview2.20084.1" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0-preview3.20122.2" />
         <PackageReference Include="Octokit" Version="0.47.0" />
         <PackageReference Include="System.Linq.Async" Version="4.1.1" />
     </ItemGroup>

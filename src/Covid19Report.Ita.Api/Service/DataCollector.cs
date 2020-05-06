@@ -24,6 +24,11 @@ namespace Covid19Report.Ita.Api.Service
         public async IAsyncEnumerable<T> GetDataAsync<T>(string url, SerializerKind serializerKind)
         {
             var response = await httpClient.GetAsync(url);
+            if (response.Content is null)
+            {
+                yield break;
+            }
+
             var content = await response.Content.ReadAsStreamAsync();
 
             currentCollectorSerializer = dataCollectorSerializers.Single(dc => dc.SerializerKind == serializerKind);
