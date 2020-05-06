@@ -106,6 +106,22 @@ stages:
                 readyTimeout: '20000'
                 overwrite: false
 
+            - task: SSH@0
+              displayName: Inizializza la nuova istanza
+              inputs:
+                sshEndpoint: 'SSH-VPS01'
+                runOptions: 'commands'
+                commands: 'pwsh -f init.ps1 -project covid19 -stage staging -name Covid19Report.Ita.Api'
+                readyTimeout: '20000'
+
+            - task: SSH@0
+              displayName: Avvia il servizio
+              inputs:
+                sshEndpoint: 'SSH-VPS01'
+                runOptions: 'commands'
+                commands: 'pwsh -f fire.ps1 -project covid19 -stage staging'
+                readyTimeout: '20000'
+
 - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
   - stage: deployProd
     displayName: Deploy The web site in Prod
@@ -122,15 +138,15 @@ stages:
               inputs:
                 sshEndpoint: 'SSH-VPS01'
                 runOptions: 'commands'
-                commands: 'pwsh -c promote.ps1 -project covid19 -fromStage staging -tostage prod -name Covid19Report.Ita.Api'
+                commands: 'pwsh -f promote.ps1 -project covid19 -fromStage staging -tostage prod -name Covid19Report.Ita.Api'
                 readyTimeout: '20000'
 
             - task: DownloadPipelineArtifact@2
-              displayName: Applica config per PRod env
+              displayName: Applica config per Prod env
               inputs:
                 buildType: 'current'
                 artifactName: 'reportweb'
-                itemPattern: 'appsetting.Production.json'
+                itemPattern: '**/appsettings.Production.json'
                 targetPath: '$(Pipeline.Workspace)/reportweb'
 
             - task: FileTransform@2
@@ -147,9 +163,9 @@ stages:
                 sourceFolder: '$(Pipeline.Workspace)/reportweb/Covid19Report.Ita.Api'
                 contents: '**'
                 targetFolder: 'covid19/prod'
-                cleanTargetFolder: true
+                cleanTargetFolder: false
                 readyTimeout: '20000'
-                overwrite: false
+                overwrite: true
 
             - task: SSH@0
               displayName: Avvia il servizio

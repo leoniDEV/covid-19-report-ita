@@ -58,21 +58,24 @@ namespace Covid19Report.Ita.Api.Controllers
                     return new StatusCodeResult((int)response);
 
                 case "covid-data":
-                    var check = await CheckLastCommitAsync();
+                    (bool check, var commit) = await CheckLastCommitAsync();
 
-                    if (check.IsCurrent)
+                    if (check)
                     {
-                        return Ok();
+                        return NoContent();
                     }
 
                     if (await SyncDateListAsync() != HttpStatusCode.OK)
+
                     {
                         return BadRequest();
                     }
 
+
                     if (await SyncCovidDataAsync(check.lastCheck) == HttpStatusCode.OK)
+
                     {
-                        response = await UpdateLastCommitDateAsync(check.LastCommit);
+                        response = await UpdateLastCommitDateAsync(commit);
                         return new StatusCodeResult((int)response);
                     }
 
@@ -87,6 +90,7 @@ namespace Covid19Report.Ita.Api.Controllers
 
         private async Task<HttpStatusCode> SyncCovidDataAsync(DateTimeOffset? lastCheck)
         {
+
             var regionRequest = new CommitRequest()
             {
                 Since = lastCheck,
@@ -262,6 +266,7 @@ namespace Covid19Report.Ita.Api.Controllers
             }
 
             return response;
+
         }
 
         private async Task<(bool IsCurrent, DateTimeOffset? lastCheck, GitHubCommit LastCommit)> CheckLastCommitAsync()
@@ -311,7 +316,7 @@ namespace Covid19Report.Ita.Api.Controllers
             if (rows == 1)
             {
                 dbConnection.Close();
-                return HttpStatusCode.OK;
+                return HttpStatusCode.NoContent;
             }
 
             dbConnection.Close();
@@ -346,7 +351,7 @@ namespace Covid19Report.Ita.Api.Controllers
                 }
             }
 
-            return HttpStatusCode.OK;
+            return HttpStatusCode.NoContent;
         }
 
         private async Task<HttpStatusCode> SyncronizeCommitAsync(JsonElement? jsonBody = null)
@@ -377,7 +382,7 @@ namespace Covid19Report.Ita.Api.Controllers
 
             if (commits.Count == 0)
             {
-                return HttpStatusCode.OK;
+                return HttpStatusCode.NoContent;
             }
 
             for (int i = 0; i < commits.Count; i++)
@@ -401,7 +406,7 @@ namespace Covid19Report.Ita.Api.Controllers
                 }
             }
 
-            return HttpStatusCode.OK;
+            return HttpStatusCode.NoContent;
         }
 
         private ItemRegione? MergeTrentino(ItemRegioneDto[]? records)

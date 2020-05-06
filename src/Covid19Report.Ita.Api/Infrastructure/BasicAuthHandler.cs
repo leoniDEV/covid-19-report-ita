@@ -34,7 +34,7 @@ namespace Covid19Report.Ita.Api.Infrastructure
 
             if (!AuthenticationHeaderValue.TryParse(Request.Headers["Authorization"], out var authHeader))
             {
-                return AuthenticateResult.Fail("You need to authenticate!");
+                return AuthenticateResult.NoResult();
             }
 
             try
