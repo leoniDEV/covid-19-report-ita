@@ -39,6 +39,11 @@ namespace Covid19Report.Ita.Api.Infrastructure
 
             try
             {
+                if (authHeader.Parameter is null)
+                {
+                    return AuthenticateResult.Fail("Invalid Auth Header");
+                }
+
                 byte[] credByets = Convert.FromBase64String(authHeader.Parameter);
                 string[] credential = Encoding.UTF8.GetString(credByets).Split(new[] { ':' }, 2);
                 auth.service = credential[0];

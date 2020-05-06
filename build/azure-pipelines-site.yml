@@ -16,7 +16,7 @@ variables:
 - name: pbiGitUrl
   value: 'https://app.powerbi.com/view?r=eyJrIjoiMjY4ODk2Y2MtMWI1Ni00M2MxLTkzNDctMTI0MjVlNTBmMWRlIiwidCI6IjU2MzRjYTUzLTc5NjUtNDAzMC1hMzBlLWE0M2NkOTkzNTMwMCIsImMiOjl9'
 - name: pbiCosmosUrl
-  value: 'https://app.powerbi.com/view?r=eyJrIjoiNTFmMTIwZTAtMWJiYy00M2I1LWEyMWUtNTNiNzM4OTY5MDViIiwidCI6IjU2MzRjYTUzLTc5NjUtNDAzMC1hMzBlLWE0M2NkOTkzNTMwMCIsImMiOjl9'
+  value: 'https://app.powerbi.com/view?r=eyJrIjoiYzlkNzAwMzAtYzkwMi00ZTAxLWEzODUtOTQyOTEyM2ViZjExIiwidCI6IjU2MzRjYTUzLTc5NjUtNDAzMC1hMzBlLWE0M2NkOTkzNTMwMCIsImMiOjl9'
 - name: pbiReportUrl
   value: $(pbiGitUrl)
 

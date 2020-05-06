@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 using Covid19Report.Ita.Api.Abstraction;
 using Covid19Report.Ita.Api.Abstraction.Service;
@@ -23,14 +21,22 @@ namespace Covid19Report.Ita.Api.Service
             this.dataCollectorSerializers = dataCollectorSerializers;
         }
 
-        public async Task<T> GetDataAsync<T>(string url, SerializerKind serializerKind, JsonSerializerOptions? jsonSerializerOptions = null)
+        public async IAsyncEnumerable<T> GetDataAsync<T>(string url, SerializerKind serializerKind)
         {
             var response = await httpClient.GetAsync(url);
+            if (response.Content is null)
+            {
+                yield break;
+            }
+
             var content = await response.Content.ReadAsStreamAsync();
 
             currentCollectorSerializer = dataCollectorSerializers.Single(dc => dc.SerializerKind == serializerKind);
 
-            return await currentCollectorSerializer.GetDateAsync<T>(content, jsonSerializerOptions);
+            await foreach (var item in currentCollectorSerializer.GetDataAsync<T>(content))
+            {
+                yield return item;
+            }
         }
     }
 }
